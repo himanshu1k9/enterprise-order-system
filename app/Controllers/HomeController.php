@@ -12,10 +12,14 @@ class HomeController {
         $this->systemInfo = $systemInfo;
     }
 
-    public function index(): array {
-        $appName =  $this->systemInfo->getApplicationName();
-        $environment = $this->systemInfo->getEnvironment();
+    // public function index(): array {
+    //     $appName =  $this->systemInfo->getApplicationName();
+    //     $environment = $this->systemInfo->getEnvironment();
 
-        return ['App Name' => $appName, 'Environment' => $environment];
+    //     return ['App Name' => $appName, 'Environment' => $environment];
+    // }
+
+    public function index(): void {
+        echo "Welcome to Enterprise Order Management System";
     }
 }
