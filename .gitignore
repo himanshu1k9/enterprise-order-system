@@ -1,1 +1,7 @@
-vendor/
+/vendor/
+/storage/logs/*
+/storage/cache/*
+/storage/exports/*
+/storage/imports/*
+
+.env
