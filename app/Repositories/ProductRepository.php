@@ -6,13 +6,19 @@ namespace App\Repositories;
 
 use PDO;
 
-class ProductRepository {
+class ProductRepository implements ProductRepositoryInterface {
     public function __construct(private PDO $pdo)
     {}
 
+    /**
+     * Methid to get product by id
+     */
     public function findById(int $id): ?array
     {
-        $stm = "SELECT * FROM products WHERE id = :id";
-        $this->pdo->prepare($stm);
+        $stm = $this->pdo->prepare("SELECT * FROM `products` WHERE id = :id");
+        $stm->execute(['id' => $id]);
+        $products = $stm->fetch(PDO::FETCH_ASSOC);
+        // var_dump($products); exit;
+        return $products ?: NULL;
     }
 }

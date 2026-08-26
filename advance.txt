@@ -1,0 +1,11 @@
+#--------------------
+# Need of Containers
+#--------------------
+
+When we creates our app like well-structured like Controller, Service
+Repository, Routes then we have to pass each Class into another.
+
+   After creating Containers we have to still write too many codes for
+Binding the classes.
+    Here Reflections comes in picture: These allow PHP to inspect classes
+at runtime.

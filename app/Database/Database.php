@@ -16,7 +16,7 @@ class Database {
         $password = $_ENV['DB_PASSWORD'];
 
         // Data Source Name
-        $dsn = "mysql:host={$host};port:{$port};dbname:{$database};charset=utf8mb4";
+        $dsn = "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4";
 
         $this->connection = new PDO(
             $dsn,

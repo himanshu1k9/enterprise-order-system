@@ -5,11 +5,11 @@ declare(strict_types = 1);
 namespace App\Controllers;
 
 use App\Http\Response;
-use App\Repositories\ProductRepository;
+use App\Repositories\ProductRepositoryInterface;
 
 class ProductController 
 {
-    public function __construct(private ProductRepository $product)
+    public function __construct(private ProductRepositoryInterface $product)
     {
     }
 

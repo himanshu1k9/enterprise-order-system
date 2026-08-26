@@ -4,11 +4,14 @@ declare(strict_types=1); // defining the strict type checking
 
 require_once __DIR__ . '/../bootstrap/app.php'; // Including bootstrap app file
 
+use App\Container\Container;
 use App\Controllers\HomeController;
 use App\Controllers\OrderController;
 use App\Controllers\ProductController;
+use App\Database\Database;
 use App\Http\Request;
 use App\Http\Response;
+// use App\Repositories\ProductRepository;
 use App\Services\SystemInfoService;
 use App\Routing\Router;
 
@@ -20,12 +23,20 @@ $router = new Router();
 // echo $systemInfoService->getApplicationName()  . "\n";
 // echo $systemInfoService->getEnvironment()  . "\n";
 
+/**
+ * For now
+ */
+// $database = new Database();
+// $pdo = $database->connection();
+
+// $productRepository = new ProductRepository($pdo);
 
 // echo "Enterprise Order Management System";
 $systemInfo = new SystemInfoService();
 $homeController = new HomeController($systemInfo);
 
-$productController = new ProductController();
+// $productController = new ProductController();
+$productController = $container->get(ProductController::class);
 $orderController = new OrderController();
 $response = new Response();
 $request = new Request();
