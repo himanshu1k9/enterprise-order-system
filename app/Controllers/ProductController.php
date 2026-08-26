@@ -18,6 +18,18 @@ class ProductController {
         echo "Product ID: {$id}";
     }
 
+    public function store(): void {
+        echo 'Product Created.';
+    }
+
+    public function update(string $id): void {
+        echo 'Updating product: ' . $id;
+    }
+
+    public function destroy(string $id): void {
+        echo 'Deleting product: ' . $id;
+    }
+
     public function review(
         string $productId,
         string $reviewId

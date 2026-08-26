@@ -7,6 +7,7 @@ require_once __DIR__ . '/../bootstrap/app.php'; // Including bootstrap app file
 use App\Controllers\HomeController;
 use App\Controllers\OrderController;
 use App\Controllers\ProductController;
+use App\Http\Request;
 use App\Http\Response;
 use App\Services\SystemInfoService;
 use App\Routing\Router;
@@ -27,6 +28,7 @@ $homeController = new HomeController($systemInfo);
 $productController = new ProductController();
 $orderController = new OrderController();
 $response = new Response();
+$request = new Request();
 
 // $systemInfor = $homeController->index();
 
@@ -34,7 +36,15 @@ $response = new Response();
  * Defining routes in core php
  */
 $router->get('/', [$homeController, 'index']);
+
+/** Products Routes */
 $router->get('/products', [$productController, 'index']);
+$router->get('/products/{$id}', [$productController, 'show']);
+$router->post('/products', [$productController, 'store']);
+$router->put('/products/{id}', [$productController, 'update']);
+$router->delete('/products/{id}', [$productController, 'destroy']);
+
+
 $router->get('/orders', [$orderController, 'index']);
 $router->post('/orders', [$orderController, 'store']);
 
@@ -55,9 +65,11 @@ $router->get('/api/helth', function() use ($response) {
 // $homeController->index();
 // echo '</pre>';
 
-$router->dispatch(
-    $_SERVER['REQUEST_METHOD'],
-    parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
-);
+$method = $request->method();
+// $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$url = $request->url();
+// Calling the dispatcher
+$router->dispatch($method, $url);
+
 
 
