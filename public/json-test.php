@@ -7,5 +7,5 @@ $body = file_get_contents('php://input');
 $data = json_decode($body, true);
 
 echo '<pre>';
-print_r($data);
+print_r($data); 
 echo '</pre>';

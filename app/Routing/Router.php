@@ -32,7 +32,7 @@ class Router {
         $this->addRouter('DELETE', $path, $handler);
     }
 
-    // Helper to add routes
+    // Helper to add routes together and build an array of routes
     private function addRouter(string $method, string $path, callable $handler): void {
         $this->router[$method][] = [
             'path' => $path,

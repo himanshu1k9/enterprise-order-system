@@ -71,5 +71,11 @@ $url = $request->url();
 // Calling the dispatcher
 $router->dispatch($method, $url);
 
+// echo '<pre>';
+// print_r($_COOKIE);
+// echo '</pre>';
+
+// echo $_COOKIE['username'] ?? 'Cookie not found';
+
 
 
