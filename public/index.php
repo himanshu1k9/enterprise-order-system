@@ -38,6 +38,8 @@ $router->get('/products', [$productController, 'index']);
 $router->get('/orders', [$orderController, 'index']);
 $router->post('/orders', [$orderController, 'store']);
 
+$router->get('/products/{id}', [$productController, 'show']);
+$router->get('/products/{productId}/reviews/{reviewId}', [$productController, 'review']);
 
 $router->get('/api/helth', function() use ($response) {
     $response->json([

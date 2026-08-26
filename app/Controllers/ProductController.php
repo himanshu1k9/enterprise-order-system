@@ -12,4 +12,16 @@ class ProductController {
         echo 'Page: ' . $page . PHP_EOL;
         echo 'Limit: ' . $limit . PHP_EOL;
     }
+
+    public function show(string $id): void
+    {
+        echo "Product ID: {$id}";
+    }
+
+    public function review(
+        string $productId,
+        string $reviewId
+    ): void {
+        echo "Product: {$productId}, Review: {$reviewId}";
+    }
 }
