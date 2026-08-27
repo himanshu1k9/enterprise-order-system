@@ -4,11 +4,11 @@ declare(strict_types=1); // defining the strict type checking
 
 require_once __DIR__ . '/../bootstrap/app.php'; // Including bootstrap app file
 
-use App\Container\Container;
+// use App\Container\Container;
 use App\Controllers\HomeController;
 use App\Controllers\OrderController;
 use App\Controllers\ProductController;
-use App\Database\Database;
+// use App\Database\Database;
 use App\Http\Request;
 use App\Http\Response;
 // use App\Repositories\ProductRepository;
@@ -37,7 +37,8 @@ $homeController = new HomeController($systemInfo);
 
 // $productController = new ProductController();
 $productController = $container->get(ProductController::class);
-$orderController = new OrderController();
+// $orderController = new OrderController();
+$orderController = $container->get(OrderController::class);
 $response = new Response();
 $request = new Request();
 

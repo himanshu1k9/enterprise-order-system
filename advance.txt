@@ -1,7 +1,6 @@
 #--------------------
 # Need of Containers
 #--------------------
-
 When we creates our app like well-structured like Controller, Service
 Repository, Routes then we have to pass each Class into another.
 
@@ -9,3 +8,18 @@ Repository, Routes then we have to pass each Class into another.
 Binding the classes.
     Here Reflections comes in picture: These allow PHP to inspect classes
 at runtime.
+
+What is Reflection?
+---------------------
+Reflection allows PHP to inspect its own code while the application is running.
+
+"What is a Service Container?"
+------------------------------
+A Service Container is responsible for creating, resolving, and 
+managing application dependencies.
+
+"What is Reflection used for in a DI container?"
+-------------------------------------------------
+PHP Reflection allows the container to inspect a class's constructor 
+and determine its required dependencies at runtime, allowing the 
+container to resolve and instantiate objects automatically.

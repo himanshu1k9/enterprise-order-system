@@ -3,7 +3,7 @@
 declare(strict_types = 1);
 
 use App\Container\Container;
-use App\Controllers\ProductController;
+// use App\Controllers\ProductController;
 use App\Database\Database;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProductRepositoryInterface;
@@ -30,6 +30,6 @@ $container->set(ProductRepositoryInterface::class, function() use($container) {
     return new ProductRepository($container->get(PDO::class));
 });
 
-$container->set(ProductController::class, function() use($container) {
-    return new ProductController($container->get(ProductRepositoryInterface::class));
-});
+// $container->set(ProductController::class, function() use($container) {
+//     return new ProductController($container->get(ProductRepositoryInterface::class));
+// });

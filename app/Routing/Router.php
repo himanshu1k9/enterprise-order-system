@@ -4,7 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Routing;
 
-class Router {
+class Router 
+{
     private array $router = [];
 
     // Get Routes

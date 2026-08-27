@@ -4,7 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Http;
 
-class Request {
+class Request 
+{
     // returns method name
     public function method(): string {
         return $_SERVER['REQUEST_METHOD'];
