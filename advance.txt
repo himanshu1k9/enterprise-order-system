@@ -23,3 +23,7 @@ managing application dependencies.
 PHP Reflection allows the container to inspect a class's constructor 
 and determine its required dependencies at runtime, allowing the 
 container to resolve and instantiate objects automatically.
+
+What is a Singleton?
+---------------------
+Create the object once and return the same object every time it is requested.

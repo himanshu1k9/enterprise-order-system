@@ -2,20 +2,22 @@
 
 declare(strict_types=1); // defining the strict type checking
 
+use App\Application;
+
 require_once __DIR__ . '/../bootstrap/app.php'; // Including bootstrap app file
 
 // use App\Container\Container;
-use App\Controllers\HomeController;
-use App\Controllers\OrderController;
-use App\Controllers\ProductController;
+// use App\Controllers\HomeController;
+// use App\Controllers\OrderController;
+// use App\Controllers\ProductController;
 // use App\Database\Database;
-use App\Http\Request;
-use App\Http\Response;
+// use App\Http\Request;
+// use App\Http\Response;
 // use App\Repositories\ProductRepository;
-use App\Services\SystemInfoService;
-use App\Routing\Router;
+// use App\Services\SystemInfoService;
+// use App\Routing\Router;
 
-$router = new Router();
+// $router = new Router();
 // $service = new GreetingService();
 // $systemInfoService = new SystemInfoService();
 
@@ -32,44 +34,44 @@ $router = new Router();
 // $productRepository = new ProductRepository($pdo);
 
 // echo "Enterprise Order Management System";
-$systemInfo = new SystemInfoService();
-$homeController = new HomeController($systemInfo);
+// $systemInfo = new SystemInfoService();
+// $homeController = new HomeController($systemInfo);
 
 // $productController = new ProductController();
-$productController = $container->get(ProductController::class);
+// $productController = $container->get(ProductController::class);
 // $orderController = new OrderController();
-$orderController = $container->get(OrderController::class);
-$response = new Response();
-$request = new Request();
+// $orderController = $container->get(OrderController::class);
+// $response = new Response();
+// $request = new Request();
 
 // $systemInfor = $homeController->index();
 
 /**
  * Defining routes in core php
  */
-$router->get('/', [$homeController, 'index']);
+// $router->get('/', [$homeController, 'index']);
 
 /** Products Routes */
-$router->get('/products', [$productController, 'index']);
-$router->get('/products/{$id}', [$productController, 'show']);
-$router->post('/products', [$productController, 'store']);
-$router->put('/products/{id}', [$productController, 'update']);
-$router->delete('/products/{id}', [$productController, 'destroy']);
+// $router->get('/products', [$productController, 'index']);
+// $router->get('/products/{$id}', [$productController, 'show']);
+// $router->post('/products', [$productController, 'store']);
+// $router->put('/products/{id}', [$productController, 'update']);
+// $router->delete('/products/{id}', [$productController, 'destroy']);
 
 
-$router->get('/orders', [$orderController, 'index']);
-$router->post('/orders', [$orderController, 'store']);
+// $router->get('/orders', [$orderController, 'index']);
+// $router->post('/orders', [$orderController, 'store']);
 
-$router->get('/products/{id}', [$productController, 'show']);
-$router->get('/products/{productId}/reviews/{reviewId}', [$productController, 'review']);
+// $router->get('/products/{id}', [$productController, 'show']);
+// $router->get('/products/{productId}/reviews/{reviewId}', [$productController, 'review']);
 
-$router->get('/api/helth', function() use ($response) {
-    $response->json([
-        "success" => true,
-        "message" => "API is running smoothly",
-        "timestamp" => time()
-    ], 200);
-});
+// $router->get('/api/helth', function() use ($response) {
+//     $response->json([
+//         "success" => true,
+//         "message" => "API is running smoothly",
+//         "timestamp" => time()
+//     ], 200);
+// });
 
 // echo '<pre>';
 // // print_r($systemInfor);
@@ -77,11 +79,11 @@ $router->get('/api/helth', function() use ($response) {
 // $homeController->index();
 // echo '</pre>';
 
-$method = $request->method();
+// $method = $request->method();
 // $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$url = $request->url();
+// $url = $request->url();
 // Calling the dispatcher
-$router->dispatch($method, $url);
+// $router->dispatch($method, $url);
 
 // echo '<pre>';
 // print_r($_COOKIE);
@@ -89,5 +91,6 @@ $router->dispatch($method, $url);
 
 // echo $_COOKIE['username'] ?? 'Cookie not found';
 
-
+$app = $container->get(Application::class);
+$app->run();
 
