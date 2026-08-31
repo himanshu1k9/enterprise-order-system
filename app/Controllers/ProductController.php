@@ -13,27 +13,29 @@ use Exception;
 
 class ProductController
 {
-    public function __construct(private ProductRepositoryInterface $product)
+    public function __construct(private ProductRepositoryInterface $product, private Request $request)
     {
     }
 
     public function index(): Response
     {
-        $page = isset($_GET) && isset($_GET['page']) ? $_GET['page'] : NULL;
-        $limit = isset($_GET) && isset($_GET['limit']) ? $_GET['limit'] : NULL;
+        $page = $this->request->query('page', 1);
+        $limit = $this->request->query('limit', 10);
+        // $page = isset($_GET) && isset($_GET['page']) ? $_GET['page'] : NULL;
+        // $limit = isset($_GET) && isset($_GET['limit']) ? $_GET['limit'] : NULL;
         // echo 'Product List' . PHP_EOL;
         // echo 'Page: ' . $page . PHP_EOL;
         // echo 'Limit: ' . $limit . PHP_EOL;
-        // return Response::json([
-        //     "success" => true,
-        //     'data' => [
-        //         'message' => 'Product List',
-        //         'page' => $page,
-        //         'limit' => $limit
-        //     ]
-        // ]);
+        return Response::json([
+            "success" => true,
+            'data' => [
+                'message' => 'Product List',
+                'page' => $page,
+                'limit' => $limit
+            ]
+        ]);
         // throw new Exception("Something went wrong");
-        throw new NotFoundException("Product not found.");
+        // throw new NotFoundException("Product not found.");
     }
 
     /**
@@ -64,7 +66,9 @@ class ProductController
 
     public function store(): Response
     {
-        $validator = new Validator(json_decode(file_get_contents('php://input'), true) ?? []);
+        // var_dump($this->request->json()); die;
+        // $validator = new Validator(json_decode(file_get_contents('php://input'), true) ?? []);
+        $validator = new Validator($this->request->json());
         $validator->validate([
             'name' => ['required', 'string'],
             'price' => ['required', 'mumeric', 'min:0'],
@@ -74,7 +78,8 @@ class ProductController
         return Response::json(
             [
                 'success' => true,
-                'message' => 'Product Created.'
+                'message' => 'Product Created.',
+                'data' => $this->request->json()
             ],
             201
         );
