@@ -4,18 +4,22 @@ declare(strict_types = 1);
 
 namespace App\Controllers;
 
-use App\Exceptions\NotFoundException;
+use App\DTO\CreateProductData;
+// use App\Exceptions\NotFoundException;
 use App\Http\Request;
 use App\Http\Response;
 use App\Repositories\ProductRepositoryInterface;
+use App\Services\ProductService;
 use App\Validation\Validator;
-use Exception;
+// use Exception;
 
 class ProductController
 {
-    public function __construct(private ProductRepositoryInterface $product, private Request $request)
-    {
-    }
+    public function __construct(
+        private ProductRepositoryInterface $product,
+        private Request $request,
+        private ProductService $productService
+        ) {}
 
     public function index(): Response
     {
@@ -75,11 +79,19 @@ class ProductController
             'stock' => ['required', 'numeric', 'min:0']
         ]);
 
+        $productData = CreateProductData::fromRequest($this->request);
+        // var_dump($productData); die;
+        $product = $this->productService->create($productData);
         return Response::json(
             [
                 'success' => true,
                 'message' => 'Product Created.',
-                'data' => $this->request->json()
+                // 'data' => [
+                //     'name' => $productData->name,
+                //     'price' => $productData->price,
+                //     'stock' => $productData->stock
+                // ]
+                'data' => $product
             ],
             201
         );
