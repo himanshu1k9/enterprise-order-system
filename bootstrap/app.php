@@ -6,6 +6,7 @@ use App\Application;
 use App\Container\Container;
 // use App\Controllers\ProductController;
 use App\Database\Database;
+use App\Http\Kernel;
 use App\Http\Request;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProductRepositoryInterface;
@@ -51,3 +52,10 @@ $container->bind(ProductRepositoryInterface::class, ProductRepository::class);
 $router = $container->get(Router::class);
 $routes = require __DIR__ . '/../routes/web.php';
 $routes($router, $container);
+
+/**
+ * Registering Kernel
+ */
+$container->singleton(Kernel::class, function() use($container) {
+    return new Kernel($container, $container->get(Router::class));
+});

@@ -27,3 +27,8 @@ container to resolve and instantiate objects automatically.
 What is a Singleton?
 ---------------------
 Create the object once and return the same object every time it is requested.
+
+What is the HTTP Kernel?
+--------------------------
+Think of the Kernel as the manager of an HTTP request.
+    The Kernel coordinates the HTTP lifecycle.

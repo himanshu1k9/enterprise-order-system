@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1); // defining the strict type checking
+session_start(); // starting the session
 
 use App\Application;
 
