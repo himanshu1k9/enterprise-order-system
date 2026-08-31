@@ -11,6 +11,9 @@ class ExceptionHandler
 {
     public function handle(Throwable $exception): Response
     {
+        /**
+         * If exception is Not found then send this response
+         */
         if($exception instanceof NotFoundException) {
             return Response::json(
                 [
@@ -18,6 +21,14 @@ class ExceptionHandler
                     'message' => $exception->getMessage()
                 ], 404
             );
+        }
+
+        if($exception instanceof ValidationException) {
+            return Response::json([
+                'success' => false,
+                'message' => $exception->getMessage(),
+                'errors' => $exception->errors()
+            ], 422);
         }
         
         $environment = $_ENV['APP_ENV'] ?? 'production';

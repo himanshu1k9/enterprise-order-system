@@ -5,8 +5,10 @@ declare(strict_types = 1);
 namespace App\Controllers;
 
 use App\Exceptions\NotFoundException;
+use App\Http\Request;
 use App\Http\Response;
 use App\Repositories\ProductRepositoryInterface;
+use App\Validation\Validator;
 use Exception;
 
 class ProductController
@@ -60,8 +62,15 @@ class ProductController
         // echo "Product ID: {$id}";
     }
 
-    public function store(): Response 
+    public function store(): Response
     {
+        $validator = new Validator(json_decode(file_get_contents('php://input'), true) ?? []);
+        $validator->validate([
+            'name' => ['required', 'string'],
+            'price' => ['required', 'mumeric', 'min:0'],
+            'stock' => ['required', 'numeric', 'min:0']
+        ]);
+
         return Response::json(
             [
                 'success' => true,
