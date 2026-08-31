@@ -5,11 +5,16 @@ declare(strict_types = 1);
 namespace App\Http;
 
 use App\Container\Container;
+use App\Exceptions\ExceptionHandler;
 use App\Routing\Router;
 
 class Kernel
 {
-    public function __construct(private Container $container, private Router $router)
+    public function __construct(
+        private Container $container,
+        private Router $router,
+        private ExceptionHandler $exceptionHandler
+        )
     {}
 
     public function handle(Request $request, array $middleware): Response
@@ -27,6 +32,16 @@ class Kernel
                 return $middleware->handle($request, $pipeline);
             };
         }
-        return $pipeline($request);
+        // return $pipeline($request);
+
+        /**
+         * Instead of all controllers we implemented exception globally
+         */
+        try
+        {
+            return $pipeline($request);
+        } catch(\Throwable $e) {
+            return $this->exceptionHandler->handle($e);
+        }
     }
 }

@@ -6,6 +6,7 @@ use App\Application;
 use App\Container\Container;
 // use App\Controllers\ProductController;
 use App\Database\Database;
+use App\Exceptions\ExceptionHandler;
 use App\Http\Kernel;
 use App\Http\Request;
 use App\Repositories\ProductRepository;
@@ -57,5 +58,7 @@ $routes($router, $container);
  * Registering Kernel
  */
 $container->singleton(Kernel::class, function() use($container) {
-    return new Kernel($container, $container->get(Router::class));
+    return new Kernel($container, $container->get(Router::class), $container->get(ExceptionHandler::class));
 });
+
+$container->singleton(ExceptionHandler::class, function() { return new ExceptionHandler(); });

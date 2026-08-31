@@ -4,8 +4,10 @@ declare(strict_types = 1);
 
 namespace App\Controllers;
 
+use App\Exceptions\NotFoundException;
 use App\Http\Response;
 use App\Repositories\ProductRepositoryInterface;
+use Exception;
 
 class ProductController
 {
@@ -20,14 +22,16 @@ class ProductController
         // echo 'Product List' . PHP_EOL;
         // echo 'Page: ' . $page . PHP_EOL;
         // echo 'Limit: ' . $limit . PHP_EOL;
-        return Response::json([
-            "success" => true,
-            'data' => [
-                'message' => 'Product List',
-                'page' => $page,
-                'limit' => $limit
-            ]
-        ]);
+        // return Response::json([
+        //     "success" => true,
+        //     'data' => [
+        //         'message' => 'Product List',
+        //         'page' => $page,
+        //         'limit' => $limit
+        //     ]
+        // ]);
+        // throw new Exception("Something went wrong");
+        throw new NotFoundException("Product not found.");
     }
 
     /**
