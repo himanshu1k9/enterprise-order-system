@@ -16,8 +16,8 @@ class Kernel
     {
         // Starting backword of Request lifecycle
         $destination = function(Request $request): Response {
-            $this->router->dispatch($request->method(), $request->url());
-            return new Response();
+            return $this->router->dispatch($request->method(), $request->url());
+            // return new Response();
         };
 
         $pipeline = $destination;

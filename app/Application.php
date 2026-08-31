@@ -9,6 +9,7 @@ use App\Http\Kernel;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\LoggingMiddleware;
 use App\Http\Request;
+use App\Http\Response;
 use App\Routing\Router;
 
 class Application
@@ -25,9 +26,10 @@ class Application
         // $method = $this->request->method();
         // $url = $this->request->url();
         // $this->router->dispatch($method, $url);
-        $this->kernel->handle($this->request, [
+        $response = $this->kernel->handle($this->request, [
             LoggingMiddleware::class,
-            AuthMiddleware::class
+            // AuthMiddleware::class
         ]);
+        $response->send(); // Calling send response method here finaly send it to browser.
     }
 }

@@ -40,7 +40,7 @@ return function(Router $router, $container): void
      * Health Check
      */
     $router->get('/api/health', function () {
-            Response::json(
+            return Response::json(
                 [
                     'success' => true,
                     'message' => 'API is running smoothly',
@@ -50,5 +50,4 @@ return function(Router $router, $container): void
             );
         }
     );
-    
 };

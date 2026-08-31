@@ -21,7 +21,7 @@ class AuthMiddleware implements MiddlewareInterface
                 ],
                 401
             );
-            return new Response();
+            return next($request);
         }
         return $next($request);
     }

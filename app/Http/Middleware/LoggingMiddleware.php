@@ -13,9 +13,9 @@ class LoggingMiddleware implements MiddlewareInterface
     #[Override]
     public function handle(Request $request, callable $next): Response
     {
-        echo 'Before request<br>';
+        // echo 'Before request <br>';
         $response = $next($request);
-        echo 'After request</br>';
+        // echo 'After request </br>';
         return $response;
     }
 }

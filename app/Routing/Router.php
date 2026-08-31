@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Routing;
 
+use App\Http\Response;
+
 class Router 
 {
     private array $router = [];
@@ -44,7 +46,7 @@ class Router
     public function dispatch(
         string $method,
         string $url
-    ): void {
+    ): Response {
         // $handler = $this->router[$method][$url] ?? NULL;
         // if($handler === NULL) {
         //     http_response_code(404);
@@ -59,16 +61,14 @@ class Router
             if(preg_match($pattern, $url, $matches)) {
                 $methodMatched = true;
                 array_shift($matches);
-                $this->invokeHandler($route['handler'], $matches);
-                return;
+                return $this->invokeHandler($route['handler'], $matches);
+                // return;
             }
         }
 
         foreach($this->router as $routes) {
             foreach($routes as $route) {
-                $pattern = $this->convertRouteToRegex(
-                    $route['path']
-                );
+                $pattern = $this->convertRouteToRegex($route['path']);
 
                 if (preg_match($pattern, $url)) {
                     $methodMatched = true;
@@ -84,23 +84,38 @@ class Router
         // echo '404 - Page Not Found';
 
         if ($methodMatched) {
-            http_response_code(405);
-            echo '405 - Method Not Allowed';
-            return;
+            return Response::json(
+                [
+                    'success' => false,
+                    'message' => '405 - Method Not Allowed'
+                ], 405
+            );
         }
 
-        http_response_code(404);
-        echo '404 - Page Not Found';
+        // http_response_code(404);
+        // echo '404 - Page Not Found';
+        return Response::json(
+            [
+                'success' => false,
+                'message' => '404 - Page Not Found'
+            ], 404
+        );
     }
 
     private function invokeHandler(
         callable $handler,
         array $parameters
-    ): void {
-        call_user_func_array(
+    ): Response {
+        $result = call_user_func_array(
             $handler,
             $parameters
         );
+
+        if (!$result instanceof Response) {
+            throw new \RuntimeException('Route handler must return an instance of Response.');
+        }
+
+        return $result;
     }
 
     private function convertRouteToRegex(
