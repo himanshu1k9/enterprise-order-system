@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types = 1);
+
+namespace App\Validation\Rules;
+
+use Override;
+
+class NumericRule implements Rule
+{
+    #[Override]
+    public function validate(string $field, mixed $value): ?string
+    {
+        if($value !== null && !is_numeric($value)) {
+            return 'Must be numeric.';
+        }
+        return null;
+    }
+}

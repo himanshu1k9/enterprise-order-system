@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\DTO\CreateProductData;
 // use App\Exceptions\NotFoundException;
 use App\Http\Request;
+use App\Http\Requests\CreateProductRequest;
 use App\Http\Response;
 use App\Repositories\ProductRepositoryInterface;
 use App\Services\ProductService;
@@ -72,14 +73,18 @@ class ProductController
     {
         // var_dump($this->request->json()); die;
         // $validator = new Validator(json_decode(file_get_contents('php://input'), true) ?? []);
-        $validator = new Validator($this->request->json());
-        $validator->validate([
-            'name' => ['required', 'string'],
-            'price' => ['required', 'mumeric', 'min:0'],
-            'stock' => ['required', 'numeric', 'min:0']
-        ]);
+        // $validator = new Validator($this->request->json());
+        // $validator->validate([
+        //     'name' => ['required', 'string'],
+        //     'price' => ['required', 'mumeric', 'min:0'],
+        //     'stock' => ['required', 'numeric', 'min:0']
+        // ]);
 
-        $productData = CreateProductData::fromRequest($this->request);
+        $request = new CreateProductRequest($this->request);
+        $request->validate();
+
+        // $productData = CreateProductData::fromRequest($this->request);
+        $productData = $request->data();
         // var_dump($productData); die;
         $product = $this->productService->create($productData);
         return Response::json(
