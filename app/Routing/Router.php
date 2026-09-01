@@ -106,10 +106,7 @@ class Router
         callable $handler,
         array $parameters
     ): Response {
-        $result = call_user_func_array(
-            $handler,
-            $parameters
-        );
+        $result = call_user_func_array($handler,$parameters);
 
         if (!$result instanceof Response) {
             throw new \RuntimeException('Route handler must return an instance of Response.');

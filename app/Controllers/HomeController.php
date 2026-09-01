@@ -3,9 +3,11 @@ declare(strict_types = 1);
 
 namespace App\Controllers;
 
+use App\Http\Response;
 use App\Services\SystemInfoService;
 
-class HomeController {
+class HomeController
+{
     protected SystemInfoService $systemInfo;
     public function __construct(SystemInfoService $systemInfo)
     {
@@ -19,7 +21,12 @@ class HomeController {
     //     return ['App Name' => $appName, 'Environment' => $environment];
     // }
 
-    public function index(): void {
-        echo "Welcome to Enterprise Order Management System";
+    public function index(): Response {
+        return Response::json(
+            [
+                'success' => true,
+                'message' => 'Welcome to Enterprise Order Management System'
+            ]
+        );
     }
 }
