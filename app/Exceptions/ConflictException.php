@@ -6,5 +6,5 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class NotFoundException extends RuntimeException
+class ConflictException extends RuntimeException
 {}

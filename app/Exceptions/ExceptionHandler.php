@@ -12,6 +12,16 @@ class ExceptionHandler
     public function handle(Throwable $exception): Response
     {
         /**
+         * Handeling conflicts exceptions
+         */
+        if($exception instanceof ConflictException) {
+            return Response::json([
+                'success' => false,
+                'message' => $exception->getMessage()
+            ], 409);
+        }
+
+        /**
          * If exception is Not found then send this response
          */
         if($exception instanceof NotFoundException) {
@@ -23,6 +33,9 @@ class ExceptionHandler
             );
         }
 
+        /**
+         * Handeling Validation exceptions
+         */
         if($exception instanceof ValidationException) {
             return Response::json([
                 'success' => false,
@@ -30,7 +43,7 @@ class ExceptionHandler
                 'errors' => $exception->errors()
             ], 422);
         }
-        
+
         $environment = $_ENV['APP_ENV'] ?? 'production';
         if($environment === 'development') {
             return Response::json(
@@ -43,6 +56,7 @@ class ExceptionHandler
                 ], 500
             );
         }
+
         return Response::json(
             [
                 'success' => false,

@@ -91,6 +91,37 @@ require_once __DIR__ . '/../bootstrap/app.php'; // Including bootstrap app file
 // echo '</pre>';
 
 // echo $_COOKIE['username'] ?? 'Cookie not found';
+function getWindowsMemoryUsage() {
+    $totalBytes = 0;
+    $freeKB = 0;
+
+    // Use PowerShell instead of deprecated wmic
+    @exec('powershell -NoProfile -Command "(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory"', $totalOutput);
+    @exec('powershell -NoProfile -Command "(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory"', $freeOutput);
+
+    if (!empty($totalOutput)) {
+        $totalBytes = (float) trim(implode('', $totalOutput));
+    }
+
+    if (!empty($freeOutput)) {
+        // FreePhysicalMemory returns value in Kilobytes
+        $freeKB = (float) trim(implode('', $freeOutput));
+    }
+
+    $totalGB = round($totalBytes / (1024 * 1024 * 1024), 2);
+    $freeGB = round(($freeKB * 1024) / (1024 * 1024 * 1024), 2);
+
+    return [
+        'total_gb' => $totalGB,
+        'free_gb' => $freeGB,
+        'used_gb' => round($totalGB - $freeGB, 2)
+    ];
+}
+
+// Example usage:
+$mem = getWindowsMemoryUsage();
+echo "Total RAM: " . $mem['total_gb'] . " GB\n";
+echo "Free RAM: " . $mem['free_gb'] . " GB\n";
 
 $app = $container->get(Application::class);
 $app->run();

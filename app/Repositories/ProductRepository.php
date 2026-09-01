@@ -5,8 +5,10 @@ declare(strict_types = 1);
 namespace App\Repositories;
 
 use App\DTO\CreateProductData;
+use App\Exceptions\ConflictException;
 use Override;
 use PDO;
+use PDOException;
 
 class ProductRepository implements ProductRepositoryInterface {
     public function __construct(private PDO $pdo)
@@ -62,14 +64,22 @@ class ProductRepository implements ProductRepositoryInterface {
         $sql = "INSERT INTO products(name, sku, description, price, stock, status)
             VALUES(:name, :sku, :description, :price, :stock, :status)";
         $statement = $this->pdo->prepare($sql);
-        $statement->execute([
-            'name' => $data->name,
-            'sku' => $data->sku,
-            'description' => $data->description,
-            'price' => $data->price,
-            'stock' => $data->stock,
-            'status' => $data->status ?? 'active'
-        ]);
+        try
+        {
+            $statement->execute([
+                'name' => $data->name,
+                'sku' => $data->sku,
+                'description' => $data->description,
+                'price' => $data->price,
+                'stock' => $data->stock,
+                'status' => $data->status ?? 'active'
+            ]);
+        } catch(PDOException $e) {
+            if(isset($e->errorInfo[1]) && (int) $e->errorInfo[1] === 1062) {
+                throw new ConflictException('Product SKU already exists.');
+            }
+            throw $e;
+        }
 
         $id = (int) $this->pdo->lastInsertId();
         return $this->findById($id);
