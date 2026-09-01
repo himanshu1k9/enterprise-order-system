@@ -7,7 +7,10 @@ namespace App\Http\Requests;
 use App\DTO\CreateProductData;
 use App\Http\Request;
 use App\Validation\Rules\IntegerRule;
+use App\Validation\Rules\MaxRule;
+use App\Validation\Rules\MinRule;
 use App\Validation\Rules\NumericRule;
+use App\Validation\Rules\RegexRule;
 use App\Validation\Rules\RequiredRule;
 use App\Validation\Rules\StringRule;
 use App\Validation\Validator;
@@ -39,15 +42,24 @@ class CreateProductRequest
         return [
             'name' => [
                 new RequiredRule(),
-                new StringRule()
+                new StringRule(),
+                new MinRule(3),
+                new MaxRule(100)
             ],
             'price' => [
                 new RequiredRule(),
-                new NumericRule()
+                new NumericRule(),
+                new MinRule(0)
             ],
             'stock' => [
                 new RequiredRule(),
-                new IntegerRule()
+                new IntegerRule(),
+                new MinRule(0)
+            ],
+            'sku' => [
+                new RequiredRule(),
+                new StringRule(),
+                new RegexRule('/^SKU-[0-9]{5}$/')
             ]
         ];
     }
