@@ -6,6 +6,7 @@ use App\Application;
 use App\Container\Container;
 // use App\Controllers\ProductController;
 use App\Database\Database;
+use App\Database\TransactionManager;
 use App\Exceptions\ExceptionHandler;
 use App\Http\Kernel;
 use App\Http\Request;
@@ -62,3 +63,9 @@ $container->singleton(Kernel::class, function() use($container) {
 });
 
 $container->singleton(ExceptionHandler::class, function() { return new ExceptionHandler(); });
+// $container->set(
+//     TransactionManager::class,
+//     function () use ($container) {
+//         return new TransactionManager($container->get(PDO::class));
+//     }
+// );

@@ -78,7 +78,6 @@ class Request
         if(!str_contains(strtolower($contentType), 'application/json')) {
             return [];
         }
-        
         $body = file_get_contents('php://input');
         if($body === false || $body === '') {
             return [];

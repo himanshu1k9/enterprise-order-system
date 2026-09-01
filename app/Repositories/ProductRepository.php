@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Repositories;
 
+use App\DTO\CreateProductData;
 use Override;
 use PDO;
 
@@ -52,22 +53,22 @@ class ProductRepository implements ProductRepositoryInterface {
     /**
      * Method to create new product
      *
-     * @param array $data
+     * @param CreateProductData $data
      * @return array
      */
     #[Override]
-    public function create(array $data): array
+    public function create(CreateProductData $data): array
     {
         $sql = "INSERT INTO products(name, sku, description, price, stock, status)
             VALUES(:name, :sku, :description, :price, :stock, :status)";
         $statement = $this->pdo->prepare($sql);
         $statement->execute([
-            'name' => $data['name'],
-            'sku' => $data['sku'],
-            'description' => $data['description'],
-            'price' => $data['price'],
-            'stock' => $data['stock'],
-            'status' => $data['status'] ?? 'active'
+            'name' => $data->name,
+            'sku' => $data->sku,
+            'description' => $data->description,
+            'price' => $data->price,
+            'stock' => $data->stock,
+            'status' => $data->status ?? 'active'
         ]);
 
         $id = (int) $this->pdo->lastInsertId();

@@ -17,7 +17,7 @@ use App\Validation\Validator;
 class ProductController
 {
     public function __construct(
-        private ProductRepositoryInterface $product,
+        // private ProductRepositoryInterface $product,
         private Request $request,
         private ProductService $productService
         ) {}
@@ -48,7 +48,8 @@ class ProductController
      */
     public function show(string $id): Response
     {
-        $product = $this->product->findById((int) $id);
+        // $product = $this->product->findById((int) $id);
+        $product = $this->productService->show((int) $id);
         if(!$product) {
             return Response::json(
                 [
@@ -57,6 +58,13 @@ class ProductController
                 ],
                 404
             );
+        }
+
+        if($product === null) {
+            return Response::json([
+                'success' => false,
+                'message' => 'Product not found.'
+            ], 404);
         }
 
         return Response::json(
@@ -97,9 +105,7 @@ class ProductController
                 //     'stock' => $productData->stock
                 // ]
                 'data' => $product
-            ],
-            201
-        );
+            ],201);
     }
 
     public function update(string $id): Response

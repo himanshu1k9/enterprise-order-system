@@ -11,7 +11,10 @@ final class CreateProductData
     public function __construct(
         public readonly string $name,
         public readonly float $price,
-        public readonly int $stock
+        public readonly int $stock,
+        public readonly ?string $description,
+        public readonly string $sku,
+        public readonly string $status = 'active'
     ) {}
 
     public static function fromRequest(Request $request): self
@@ -19,7 +22,10 @@ final class CreateProductData
         return new self(
             name: (string) $request->input('name'),
             price: (float) $request->input('price'),
-            stock: (int) $request->input('stock')
+            stock: (int) $request->input('stock'),
+            description: (string) $request->input('description') ?? null,
+            sku: (string) $request->input('sku'),
+            status: (string) $request->input('status') ?? 'active'
         );
     }
 }

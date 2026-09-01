@@ -60,6 +60,13 @@ class CreateProductRequest
                 new RequiredRule(),
                 new StringRule(),
                 new RegexRule('/^SKU-[0-9]{5}$/')
+            ],
+            "description" => [
+                new StringRule()
+            ],
+            "status" => [
+                // new RequiredRule(),
+                new StringRule(),
             ]
         ];
     }
