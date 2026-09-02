@@ -10,8 +10,7 @@ class Response
         private string $body = "",
         private int $status = 200,
         private array $headers = []
-        )
-    {}
+        ) {}
 
     // public static function json(array $data, int $statusCode = 200): void {
     //     http_response_code($statusCode);
@@ -79,5 +78,16 @@ class Response
             status: $status,
             headers: ["Location" => $url]
         );
+    }
+
+    public function withHeader(string $name, string $value): self
+    {
+        $this->headers[$name] = $value;
+        return $this;
+    }
+
+    public function status(): int
+    {
+        return $this->status;
     }
 }

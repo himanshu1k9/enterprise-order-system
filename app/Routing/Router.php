@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Routing;
 
+use App\Exceptions\NotFoundException;
 use App\Http\Response;
 
 class Router 
@@ -94,12 +95,13 @@ class Router
 
         // http_response_code(404);
         // echo '404 - Page Not Found';
-        return Response::json(
-            [
-                'success' => false,
-                'message' => '404 - Page Not Found'
-            ], 404
-        );
+        // return Response::json(
+        //     [
+        //         'success' => false,
+        //         'message' => '404 - Page Not Found'
+        //     ], 404
+        // );
+        throw new NotFoundException('404 - Page not found');
     }
 
     private function invokeHandler(

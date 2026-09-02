@@ -6,7 +6,6 @@ namespace App\Container;
 
 use ReflectionClass;
 use RuntimeException;
-
 class Container
 {
     private array $bindings = [];
