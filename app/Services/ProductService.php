@@ -6,6 +6,8 @@ namespace App\Services;
 
 use App\Database\TransactionManager;
 use App\DTO\CreateProductData;
+use App\DTO\PaginationData;
+use App\DTO\ProductFilterData;
 use App\Repositories\ProductRepositoryInterface;
 
 class ProductService
@@ -16,6 +18,12 @@ class ProductService
         )
     {}
 
+    /**
+     * Service to create the product
+     *
+     * @param CreateProductData $data
+     * @return array
+     */
     public function create(CreateProductData $data): array
     {
         // return [
@@ -28,13 +36,36 @@ class ProductService
         });
     }
 
+    /**
+     * Service to get Single product
+     *
+     * @param integer $id
+     * @return array
+     */
     public function show(int $id): array
     {
         return $this->productRepo->findById($id);
     }
 
+    /**
+     * Service to get all products
+     *
+     * @return array
+     */
     public function all(): array
     {
         return $this->productRepo->all();
+    }
+
+    /**
+     * Service to get paginated product data
+     *
+     * @param PaginationData $pagination
+     * @param ProductFilterData $filters
+     * @return array
+     */
+    public function paginate(PaginationData $pagination, ProductFilterData $filters): array
+    {
+        return $this->productRepo->paginate($pagination, $filters);
     }
 }

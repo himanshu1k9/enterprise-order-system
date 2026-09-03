@@ -4,14 +4,18 @@ declare(strict_types = 1);
 
 namespace App\Controllers;
 
-use App\DTO\CreateProductData;
+// use App\DTO\CreateProductData;
 // use App\Exceptions\NotFoundException;
+
+use App\DTO\PaginationData;
+use App\DTO\ProductFilterData;
 use App\Http\Request;
 use App\Http\Requests\CreateProductRequest;
+use App\Http\Requests\ProductIndexRequest;
 use App\Http\Response;
-use App\Repositories\ProductRepositoryInterface;
+// use App\Repositories\ProductRepositoryInterface;
 use App\Services\ProductService;
-use App\Validation\Validator;
+// use App\Validation\Validator;
 // use Exception;
 
 class ProductController
@@ -24,21 +28,25 @@ class ProductController
 
     public function index(): Response
     {
-        $page = $this->request->query('page', 1);
-        $limit = $this->request->query('limit', 10);
+        $query = new ProductIndexRequest($this->request);
+        $query->validate();
+        // $page = (int) $this->request->query('page', 1);
+        // $limit = (int) $this->request->query('limit', 10);
+        // $status = $this->request->query('status');
+        // $search = $this->request->query('search');
         // $page = isset($_GET) && isset($_GET['page']) ? $_GET['page'] : NULL;
         // $limit = isset($_GET) && isset($_GET['limit']) ? $_GET['limit'] : NULL;
         // echo 'Product List' . PHP_EOL;
         // echo 'Page: ' . $page . PHP_EOL;
         // echo 'Limit: ' . $limit . PHP_EOL;
+
+        $pagination = new PaginationData(page: $query->page(), limit: $query->limit());
+        $filters = new ProductFilterData(status: $query->status(), search: $query->search());
+        $products = $this->productService->paginate($pagination, $filters);
         return Response::json([
             "success" => true,
-            'data' => [
-                'message' => 'Product List',
-                'page' => $page,
-                'limit' => $limit
-            ]
-        ]);
+            'data' => $products
+        ], 200);
         // throw new Exception("Something went wrong");
         // throw new NotFoundException("Product not found.");
     }
@@ -60,12 +68,12 @@ class ProductController
             );
         }
 
-        if($product === null) {
-            return Response::json([
-                'success' => false,
-                'message' => 'Product not found.'
-            ], 404);
-        }
+        // if($product === null) {
+        //     return Response::json([
+        //         'success' => false,
+        //         'message' => 'Product not found.'
+        //     ], 404);
+        // }
 
         return Response::json(
             [

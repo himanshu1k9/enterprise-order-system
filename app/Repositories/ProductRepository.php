@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace App\Repositories;
 
 use App\DTO\CreateProductData;
+use App\DTO\PaginationData;
+use App\DTO\ProductFilterData;
 use App\Exceptions\ConflictException;
 use Override;
 use PDO;
@@ -83,5 +85,61 @@ class ProductRepository implements ProductRepositoryInterface {
 
         $id = (int) $this->pdo->lastInsertId();
         return $this->findById($id);
+    }
+
+    /**
+     * This method returning the pagination data.
+     *
+     * @param PaginationData $pagination
+     * @return array
+     */
+    #[Override]
+    public function paginate(PaginationData $pagination, ProductFilterData $productFilter): array
+    {
+        $where = [];
+        $params = [];
+
+        if($productFilter->status !== null) {
+            $where[] = 'status = :status';
+            $params['status'] = $productFilter->status;
+        }
+
+        if($productFilter->search !== null) {
+            $where[] = '( name LIKE :name OR sku LIKE :sku )';
+            $params['name'] = '%' . $productFilter->search . '%';
+            $params['sku'] = '%' . $productFilter->search . '%';
+        }
+
+        $whereSQL = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+
+        $sql = "SELECT id, name, sku, description, price, stock,
+            status, created_at, updated_at FROM products $whereSQL ORDER BY
+            id DESC LIMIT :limit OFFSET :offset";
+
+        $statement = $this->pdo->prepare($sql);
+        foreach($params as $name => $param) {
+            $statement->bindValue(':' . $name, $param);
+        }
+
+        $statement->bindValue(':limit', $pagination->limit, PDO::PARAM_INT);
+        $statement->bindValue(':offset', $pagination->offset(), PDO::PARAM_INT);
+        $statement->execute();
+
+        $products = $statement->fetchAll();
+
+        $countStatement = $this->pdo->prepare("SELECT COUNT(*) FROM products $whereSQL");
+        foreach($params as $name => $param) {
+            $countStatement->bindValue(':' . $name, $param);
+        }
+        $countStatement->execute();
+        $total = (int) $countStatement->fetchColumn();
+
+        return [
+            'data' => $products,
+            'page' => $pagination->page,
+            'limit' => $pagination->limit,
+            'total' => $total,
+            'total_pages' => (int) ceil( $total / $pagination->limit )
+        ];
     }
 }
