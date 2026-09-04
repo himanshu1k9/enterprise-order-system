@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Http\Requests;
 
 use App\Http\Request;
+use App\Validation\Rules\InRule;
 use App\Validation\Rules\IntegerRule;
 use App\Validation\Rules\MaxRule;
 use App\Validation\Rules\MinRule;
@@ -13,7 +14,7 @@ use App\Validation\Validator;
 
 class ProductIndexRequest
 {
-    private array $errors = [];
+    // private array $errors = [];
     public function __construct(private Request $request)
     {}
 
@@ -28,7 +29,9 @@ class ProductIndexRequest
             'page' => $this->request->query('page', 1),
             'limit' => $this->request->query('limit', 10),
             'status' => $this->request->query('status'),
-            'search' => $this->request->query('search')
+            'search' => $this->request->query('search'),
+            'sort' => $this->request->query('sort', 'id'),
+            'direction' => $this->request->query('direction', 'desc')
         ];
 
         $validator = new Validator($data);
@@ -44,10 +47,19 @@ class ProductIndexRequest
             ],
             'status' => [
                 new StringRule(),
+                new InRule(['active', 'inactive'])
             ],
             'search' => [
                 new StringRule(),
                 new MaxRule(100)
+            ],
+            'sort' => [
+                new StringRule(),
+                new InRule(['id', 'name', 'price', 'stock', 'created_at'])
+            ],
+            'direction' => [
+                new StringRule(),
+                new InRule(['asc', 'desc'])
             ]
         ]);
     }
@@ -91,5 +103,25 @@ class ProductIndexRequest
     {
         $search = $this->request->query('search');
         return $search !== null ? (string) $search : null;
+    }
+
+    /**
+     * Method to return sorting query
+     *
+     * @return string
+     */
+    public function sort(): string
+    {
+        return (string) $this->request->query('sort', 'id');
+    }
+
+    /**
+     * Method to return direction of sorting
+     *
+     * @return string
+     */
+    public function direction(): string
+    {
+        return (string) $this->request->query('direction', 'desc');
     }
 }

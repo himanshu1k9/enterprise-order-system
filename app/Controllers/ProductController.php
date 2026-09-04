@@ -9,6 +9,7 @@ namespace App\Controllers;
 
 use App\DTO\PaginationData;
 use App\DTO\ProductFilterData;
+use App\DTO\ProductSortData;
 use App\Http\Request;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\ProductIndexRequest;
@@ -42,10 +43,21 @@ class ProductController
 
         $pagination = new PaginationData(page: $query->page(), limit: $query->limit());
         $filters = new ProductFilterData(status: $query->status(), search: $query->search());
-        $products = $this->productService->paginate($pagination, $filters);
+        $sort = new ProductSortData(sort: $query->sort(), direction: $query->direction());
+        $response = $this->productService->paginate($pagination, $filters, $sort);
+        $products = $response['data'];
+        $metaData = [
+            'current_page' => $response['page'],
+            'per_page' => $response['limit'],
+            'total' => $response['total'],
+            'last_page' => $response['total_pages']
+        ];
+
+        // var_dump($response); die;
         return Response::json([
             "success" => true,
-            'data' => $products
+            'data' => $products,
+            'meta' => $metaData
         ], 200);
         // throw new Exception("Something went wrong");
         // throw new NotFoundException("Product not found.");

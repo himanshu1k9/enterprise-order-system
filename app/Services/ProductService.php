@@ -8,6 +8,7 @@ use App\Database\TransactionManager;
 use App\DTO\CreateProductData;
 use App\DTO\PaginationData;
 use App\DTO\ProductFilterData;
+use App\DTO\ProductSortData;
 use App\Repositories\ProductRepositoryInterface;
 
 class ProductService
@@ -64,8 +65,8 @@ class ProductService
      * @param ProductFilterData $filters
      * @return array
      */
-    public function paginate(PaginationData $pagination, ProductFilterData $filters): array
+    public function paginate(PaginationData $pagination, ProductFilterData $filters, ProductSortData $sort): array
     {
-        return $this->productRepo->paginate($pagination, $filters);
+        return $this->productRepo->paginate($pagination, $filters, $sort);
     }
 }

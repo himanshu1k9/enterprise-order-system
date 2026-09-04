@@ -7,6 +7,7 @@ namespace App\Repositories;
 use App\DTO\CreateProductData;
 use App\DTO\PaginationData;
 use App\DTO\ProductFilterData;
+use App\DTO\ProductSortData;
 use App\Exceptions\ConflictException;
 use Override;
 use PDO;
@@ -94,10 +95,23 @@ class ProductRepository implements ProductRepositoryInterface {
      * @return array
      */
     #[Override]
-    public function paginate(PaginationData $pagination, ProductFilterData $productFilter): array
+    public function paginate(PaginationData $pagination, ProductFilterData $productFilter, ProductSortData $sort): array
     {
         $where = [];
         $params = [];
+
+        /**
+         * Whitelisting columns for sorting
+         */
+        $allowedSortColumns = [
+            'id' => 'id',
+            'name' => 'name',
+            'price' => 'price',
+            'stock' => 'stock',
+            'created_at' => 'created_at'
+        ];
+        $sortColumn = $allowedSortColumns[$sort->sort];
+        $sortDirection = strtoupper($sort->direction);
 
         if($productFilter->status !== null) {
             $where[] = 'status = :status';
@@ -114,7 +128,7 @@ class ProductRepository implements ProductRepositoryInterface {
 
         $sql = "SELECT id, name, sku, description, price, stock,
             status, created_at, updated_at FROM products $whereSQL ORDER BY
-            id DESC LIMIT :limit OFFSET :offset";
+            $sortColumn $sortDirection LIMIT :limit OFFSET :offset";
 
         $statement = $this->pdo->prepare($sql);
         foreach($params as $name => $param) {
