@@ -6,6 +6,7 @@ use App\Controllers\AuthController;
 use App\Controllers\HomeController;
 use App\Controllers\OrderController;
 use App\Controllers\ProductController;
+use App\Http\Middleware\AuthMiddleware;
 use App\Http\Response;
 use App\Routing\Router;
 
@@ -27,9 +28,9 @@ return function(Router $router, $container): void
      */
     $router->get('/products', [$productController, 'index']);
     $router->get('/products/{id}', [$productController, 'show']);
-    $router->post('/products', [$productController, 'store']);
-    $router->patch('/products/{id}', [$productController, 'update']);
-    $router->delete('/products/{id}', [$productController, 'destroy']);
+    $router->post('/products', [$productController, 'store'], [AuthMiddleware::class]);
+    $router->patch('/products/{id}', [$productController, 'update'], [AuthMiddleware::class]);
+    $router->delete('/products/{id}', [$productController, 'destroy'], [AuthMiddleware::class]);
     $router->get('/products/{productId}/reviews/{reviewId}', [$productController, 'review']);
 
     /**

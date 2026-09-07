@@ -92,6 +92,13 @@ require_once __DIR__ . '/../bootstrap/app.php'; // Including bootstrap app file
 
 // echo $_COOKIE['username'] ?? 'Cookie not found';
 
+// if(session_status() === PHP_SESSION_NONE) {
+//             session_start();
+//         }
+
+//         $_SESSION = [];
+//         session_destroy();
+
 $app = $container->get(Application::class);
 $app->run();
 
