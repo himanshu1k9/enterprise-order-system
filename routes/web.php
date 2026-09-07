@@ -7,6 +7,8 @@ use App\Controllers\HomeController;
 use App\Controllers\OrderController;
 use App\Controllers\ProductController;
 use App\Http\Middleware\AuthMiddleware;
+use App\Http\Middleware\ProductDeleteMiddleware;
+use App\Http\Middleware\ProductWriteMiddleware;
 use App\Http\Response;
 use App\Routing\Router;
 
@@ -28,9 +30,9 @@ return function(Router $router, $container): void
      */
     $router->get('/products', [$productController, 'index']);
     $router->get('/products/{id}', [$productController, 'show']);
-    $router->post('/products', [$productController, 'store'], [AuthMiddleware::class]);
-    $router->patch('/products/{id}', [$productController, 'update'], [AuthMiddleware::class]);
-    $router->delete('/products/{id}', [$productController, 'destroy'], [AuthMiddleware::class]);
+    $router->post('/products', [$productController, 'store'], [AuthMiddleware::class, ProductWriteMiddleware::class]);
+    $router->patch('/products/{id}', [$productController, 'update'], [AuthMiddleware::class, ProductWriteMiddleware::class]);
+    $router->delete('/products/{id}', [$productController, 'destroy'], [AuthMiddleware::class, ProductDeleteMiddleware::class]);
     $router->get('/products/{productId}/reviews/{reviewId}', [$productController, 'review']);
 
     /**

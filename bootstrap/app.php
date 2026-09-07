@@ -3,12 +3,16 @@
 declare(strict_types = 1);
 
 use App\Application;
+use App\Auth\CurrentUser;
+use App\Auth\SessionManager;
 use App\Container\Container;
 // use App\Controllers\ProductController;
 use App\Database\Database;
 // use App\Database\TransactionManager;
 use App\Exceptions\ExceptionHandler;
 use App\Http\Kernel;
+use App\Http\Middleware\ProductDeleteMiddleware;
+use App\Http\Middleware\ProductWriteMiddleware;
 use App\Http\Request;
 use App\Http\RequestId;
 use App\Logging\Logger;
@@ -81,3 +85,27 @@ $container->singleton(ExceptionHandler::class, function() use($container) { retu
 $container->singleton(Logger::class, function() use($container) {return new Logger(dirname(__DIR__) . '/storage/logs/app.log', $container->get(RequestId::class));});
 $container->singleton(RequestId::class, function() { return new RequestId(); });
 $container->singleton(SessionHandler::class, function() {return new SessionHandler();});
+$container->singleton(CurrentUser::class, function() use($container) {
+    return new CurrentUser(
+        $container->get(SessionManager::class),
+        $container->get(UserRepositoryInterface::class)
+    );
+});
+
+$container->singleton(
+    ProductWriteMiddleware::class,
+    function () use ($container) {
+        return new ProductWriteMiddleware(
+            $container->get(CurrentUser::class)
+        );
+    }
+);
+
+$container->singleton(
+    ProductDeleteMiddleware::class,
+    function () use ($container) {
+        return new ProductDeleteMiddleware(
+            $container->get(CurrentUser::class)
+        );
+    }
+);
