@@ -6,7 +6,7 @@ use App\Application;
 use App\Container\Container;
 // use App\Controllers\ProductController;
 use App\Database\Database;
-use App\Database\TransactionManager;
+// use App\Database\TransactionManager;
 use App\Exceptions\ExceptionHandler;
 use App\Http\Kernel;
 use App\Http\Request;
@@ -14,13 +14,15 @@ use App\Http\RequestId;
 use App\Logging\Logger;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProductRepositoryInterface;
+use App\Repositories\UserRepository;
+use App\Repositories\UserRepositoryInterface;
 use App\Routing\Router;
 use Dotenv\Dotenv;
 
 require_once __DIR__ . '/../vendor/autoload.php'; // requiring vender autoload for autoloading files
 
 // Loading dotenv file
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../'); 
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->safeLoad();
 
 error_reporting(E_ALL);
@@ -44,6 +46,7 @@ $container->bind(Application::class, Application::class);
 // });
 
 $container->bind(ProductRepositoryInterface::class, ProductRepository::class);
+$container->bind(UserRepositoryInterface::class, UserRepository::class);
 
 // $container->set(ProductController::class, function() use($container) {
 //     return new ProductController($container->get(ProductRepositoryInterface::class));

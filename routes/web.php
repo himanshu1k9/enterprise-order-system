@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+use App\Controllers\AuthController;
 use App\Controllers\HomeController;
 use App\Controllers\OrderController;
 use App\Controllers\ProductController;
@@ -13,6 +14,7 @@ return function(Router $router, $container): void
     $homeController = $container->get(HomeController::class);
     $productController = $container->get(ProductController::class);
     $orderController = $container->get(OrderController::class);
+    $authController = $container->get(AuthController::class);
 
 
     /**
@@ -35,6 +37,11 @@ return function(Router $router, $container): void
      */
     $router->get('/orders', [$orderController, 'index']);
     $router->post('/orders', [$orderController, 'store']);
+
+    /**
+     * Auth Routes
+     */
+    $router->post('/register', [$authController, 'register']);
 
     /**
      * Health Check
