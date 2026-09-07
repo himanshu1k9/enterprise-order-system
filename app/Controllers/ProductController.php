@@ -10,9 +10,11 @@ namespace App\Controllers;
 use App\DTO\PaginationData;
 use App\DTO\ProductFilterData;
 use App\DTO\ProductSortData;
+use App\DTO\UpdateProductData;
 use App\Http\Request;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\ProductIndexRequest;
+use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Response;
 // use App\Repositories\ProductRepositoryInterface;
 use App\Services\ProductService;
@@ -128,9 +130,15 @@ class ProductController
             ],201);
     }
 
-    public function update(string $id): Response
+    public function update(int $id): Response
     {
         // echo 'Updating product: ' . $id;
+        $request =  new  ProductUpdateRequest($this->request);
+        $request->validate();
+        $updateData = $request->data();
+
+        $this->productService->update($id, $updateData);
+
         return Response::json(
             [
                 'success' => true,
@@ -140,9 +148,10 @@ class ProductController
         );
     }
 
-    public function destroy(string $id): Response
+    public function destroy(int $id): Response
     {
         // echo 'Deleting product: ' . $id;
+        $this->productService->delete($id);
         return Response::json(
             [
                 'success' => true,

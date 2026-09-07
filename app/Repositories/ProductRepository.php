@@ -8,6 +8,7 @@ use App\DTO\CreateProductData;
 use App\DTO\PaginationData;
 use App\DTO\ProductFilterData;
 use App\DTO\ProductSortData;
+use App\DTO\UpdateProductData;
 use App\Exceptions\ConflictException;
 use Override;
 use PDO;
@@ -155,5 +156,49 @@ class ProductRepository implements ProductRepositoryInterface {
             'total' => $total,
             'total_pages' => (int) ceil( $total / $pagination->limit )
         ];
+    }
+
+    /**
+     * Method to update the product
+     *
+     * @param integer $id
+     * @param UpdateProductData $data
+     * @return boolean
+     */
+    #[Override]
+    public function update(int $id, UpdateProductData $data): bool
+    {
+        $sql = "UPDATE products set name = :name, sku = :sku,
+            description = :description, price = :price, stock = :stock,
+            status = :status WHERE id = :id";
+
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindValue(':id', $id, PDO::PARAM_INT);
+        $statement->bindValue(':name', $data->name, PDO::PARAM_STR);
+        $statement->bindValue(':sku', $data->sku, PDO::PARAM_STR);
+        $statement->bindValue(':description', $data->description, PDO::PARAM_STR);
+        $statement->bindValue(':price', $data->price);
+        $statement->bindValue(':stock', $data->stock, PDO::PARAM_INT);
+        $statement->bindValue(':status', $data->status, PDO::PARAM_STR);
+
+        $statement->execute();
+
+        return $statement->rowCount() > 0;
+    }
+
+    /**
+     * Method to delete the product
+     *
+     * @param integer $id
+     * @return boolean
+     */
+    #[Override]
+    public function delete(int $id): bool
+    {
+        $statement = $this->pdo->prepare("DELETE FROM products WHERE id = :id");
+        $statement->bindValue(':id', $id, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->rowCount() > 0;
     }
 }

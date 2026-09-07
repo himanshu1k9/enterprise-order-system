@@ -26,7 +26,7 @@ return function(Router $router, $container): void
     $router->get('/products', [$productController, 'index']);
     $router->get('/products/{id}', [$productController, 'show']);
     $router->post('/products', [$productController, 'store']);
-    $router->put('/products/{id}', [$productController, 'update']);
+    $router->patch('/products/{id}', [$productController, 'update']);
     $router->delete('/products/{id}', [$productController, 'destroy']);
     $router->get('/products/{productId}/reviews/{reviewId}', [$productController, 'review']);
 
