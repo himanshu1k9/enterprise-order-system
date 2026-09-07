@@ -24,8 +24,8 @@ class CreateProductRequest
 
     public function validate(): void
     {
-        $header = $this->request->header('Content-Type');
-        $data = $header === 'application/json' ? $this->request->json() : $this->request->all();
+        $contentType = strtolower($this->request->header('Content-Type') ?? '');
+        $data = str_starts_with($contentType, 'application/json') ? $this->request->json() : $this->request->all();
         // var_dump($data); die;
         $validator = new Validator($data);
         $validator->validate($this->rules());
