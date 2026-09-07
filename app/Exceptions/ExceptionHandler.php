@@ -18,6 +18,13 @@ class ExceptionHandler
     public function handle(Throwable $exception): Response
     {
         /**
+         * Handeling Authentication errors
+         */
+        if($exception instanceof AuthenticationException) {
+            return ApiResponse::error($exception->getMessage(), 401);
+        }
+
+        /**
          * Handeling conflicts exceptions
          */
         if($exception instanceof ConflictException) {

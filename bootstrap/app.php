@@ -80,3 +80,4 @@ $container->singleton(ExceptionHandler::class, function() use($container) { retu
 
 $container->singleton(Logger::class, function() use($container) {return new Logger(dirname(__DIR__) . '/storage/logs/app.log', $container->get(RequestId::class));});
 $container->singleton(RequestId::class, function() { return new RequestId(); });
+$container->singleton(SessionHandler::class, function() {return new SessionHandler();});

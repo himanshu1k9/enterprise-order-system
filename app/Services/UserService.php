@@ -4,12 +4,13 @@ declare(strict_types = 1);
 
 namespace App\Services;
 
+use App\Exceptions\AuthenticationException;
 use App\Exceptions\ConflictException;
-use App\Repositories\UserRepository;
+use App\Repositories\UserRepositoryInterface;
 
 class UserService
 {
-    public function __construct(private UserRepository $repo)
+    public function __construct(private UserRepositoryInterface $repo)
     {}
 
     /**
@@ -29,5 +30,27 @@ class UserService
 
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         return $this->repo->create($name, $email, $passwordHash);
+    }
+
+    /**
+     * Method to login the user
+     *
+     * @param string $email
+     * @param string $password
+     * @return array
+     */
+    public function login(string $email, string $password): array
+    {
+        $user = $this->repo->findByEmail($email);
+
+        if($user === false) {
+            throw new AuthenticationException("Invalid Credentials.");
+        }
+
+        if(!password_verify($password, $user['password'])) {
+            throw new AuthenticationException("Invalid Credentials");
+        }
+
+        return $user;
     }
 }

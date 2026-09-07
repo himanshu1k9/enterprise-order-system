@@ -42,6 +42,7 @@ return function(Router $router, $container): void
      * Auth Routes
      */
     $router->post('/register', [$authController, 'register']);
+    $router->post('/login', [$authController, 'login']);
 
     /**
      * Health Check
