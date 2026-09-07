@@ -11,6 +11,7 @@ use App\DTO\PaginationData;
 use App\DTO\ProductFilterData;
 use App\DTO\ProductSortData;
 use App\DTO\UpdateProductData;
+use App\Http\ApiResponse;
 use App\Http\Request;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\ProductIndexRequest;
@@ -73,13 +74,14 @@ class ProductController
         // $product = $this->product->findById((int) $id);
         $product = $this->productService->show((int) $id);
         if(!$product) {
-            return Response::json(
-                [
-                    'success' => false,
-                    'message' => 'Product not found.'
-                ],
-                404
-            );
+            // return Response::json(
+            //     [
+            //         'success' => false,
+            //         'message' => 'Product not found.'
+            //     ],
+            //     404
+            // );
+            return ApiResponse::error("Product not found", 404);
         }
 
         // if($product === null) {
@@ -89,14 +91,16 @@ class ProductController
         //     ], 404);
         // }
 
-        return Response::json(
-            [
-                'success' => true,
-                'data' => $product
-            ],
-            200
-        );
+        // return Response::json(
+        //     [
+        //         'success' => true,
+        //         'data' => $product
+        //     ],
+        //     200
+        // );
         // echo "Product ID: {$id}";
+
+        return ApiResponse::success(message: "Product found", data: $product, status: 200);
     }
 
     public function store(): Response
@@ -117,17 +121,18 @@ class ProductController
         $productData = $request->data();
         // var_dump($productData); die;
         $product = $this->productService->create($productData);
-        return Response::json(
-            [
-                'success' => true,
-                'message' => 'Product Created.',
+        // return Response::json(
+        //     [
+        //         'success' => true,
+        //         'message' => 'Product Created.',
                 // 'data' => [
                 //     'name' => $productData->name,
                 //     'price' => $productData->price,
                 //     'stock' => $productData->stock
                 // ]
-                'data' => $product
-            ],201);
+            //     'data' => $product
+            // ],201);
+            return ApiResponse::success(message: "Product Created", data: $product, status: 201);
     }
 
     public function update(int $id): Response
@@ -139,26 +144,30 @@ class ProductController
 
         $this->productService->update($id, $updateData);
 
-        return Response::json(
-            [
-                'success' => true,
-                'message' => 'Product updated.',
-                'id' => $id
-            ]
-        );
+        // return Response::json(
+        //     [
+        //         'success' => true,
+        //         'message' => 'Product updated.',
+        //         'id' => $id
+        //     ]
+        // );
+
+        return ApiResponse::success(message: "Product Updated", data: ['id' => $id]);
     }
 
     public function destroy(int $id): Response
     {
         // echo 'Deleting product: ' . $id;
         $this->productService->delete($id);
-        return Response::json(
-            [
-                'success' => true,
-                'message' => 'Product deleted.',
-                'id' => $id
-            ]
-        );
+        // return Response::json(
+        //     [
+        //         'success' => true,
+        //         'message' => 'Product deleted.',
+        //         'id' => $id
+        //     ]
+        // );
+
+        return ApiResponse::success(message: "Product deleted", data: ['id' => $id]);
     }
 
     public function review(

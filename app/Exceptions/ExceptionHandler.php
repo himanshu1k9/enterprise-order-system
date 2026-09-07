@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Exceptions;
 
+use App\Http\ApiResponse;
 use App\Http\RequestId;
 use App\Http\Response;
 use App\Logging\Logger;
@@ -20,10 +21,11 @@ class ExceptionHandler
          * Handeling conflicts exceptions
          */
         if($exception instanceof ConflictException) {
-            return Response::json([
-                'success' => false,
-                'message' => $exception->getMessage()
-            ], 409);
+            // return Response::json([
+            //     'success' => false,
+            //     'message' => $exception->getMessage()
+            // ], 409);
+            return ApiResponse::error($exception->getMessage(), 409);
         }
 
         /**
@@ -42,23 +44,27 @@ class ExceptionHandler
                 ]
             );
 
-            return Response::json(
-                [
-                    'success' => false,
-                    'message' => $exception->getMessage()
-                ], 404
-            );
+            // return Response::json(
+            //     [
+            //         'success' => false,
+            //         'message' => $exception->getMessage()
+            //     ], 404
+            // );
+
+            return ApiResponse::error($exception->getMessage(), 404);
         }
 
         /**
          * Handeling Validation exceptions
          */
         if($exception instanceof ValidationException) {
-            return Response::json([
-                'success' => false,
-                'message' => $exception->getMessage(),
-                'errors' => $exception->errors()
-            ], 422);
+            // return Response::json([
+            //     'success' => false,
+            //     'message' => $exception->getMessage(),
+            //     'errors' => $exception->errors()
+            // ], 422);
+
+            return ApiResponse::error($exception->getMessage(), 422, $exception->errors());
         }
 
         $this->logger->error(
@@ -86,11 +92,12 @@ class ExceptionHandler
             );
         }
 
-        return Response::json(
-            [
-                'success' => false,
-                'message' => 'Internal Server Error.'
-            ], 500
-        );
+        // return Response::json(
+        //     [
+        //         'success' => false,
+        //         'message' => 'Internal Server Error.'
+        //     ], 500
+        // );
+        return ApiResponse::error($exception->getMessage(), 500);
     }
 }
