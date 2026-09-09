@@ -10,6 +10,7 @@ use App\Http\Request;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Response;
+use App\Security\CsrfManager;
 use App\Services\UserService;
 
 class AuthController
@@ -17,7 +18,8 @@ class AuthController
     public function __construct(
         private Request $request,
         private UserService $service,
-        private SessionManager $sessionManager) {}
+        private SessionManager $sessionManager,
+        private CsrfManager $csrf) {}
 
     /**
      * Controller to handeling Register Request / Response
@@ -67,5 +69,17 @@ class AuthController
     {
         $this->sessionManager->logout();
         return ApiResponse::success('Logged out successfully.');
+    }
+
+    /**
+     * Endpoint to send CSRF
+     *
+     * @return Response
+     */
+    public function csrf(): Response
+    {
+        return ApiResponse::success('CSRF token generated', [
+            'token' => $this->csrf->token()
+        ]);
     }
 }

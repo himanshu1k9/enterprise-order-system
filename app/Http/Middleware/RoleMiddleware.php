@@ -8,6 +8,7 @@ use App\Auth\CurrentUser;
 use App\Http\ApiResponse;
 use App\Http\Request;
 use App\Http\Response;
+use App\Http\Middleware\MiddlewareInterface;
 use Override;
 
 class RoleMiddleware implements MiddlewareInterface
@@ -23,7 +24,7 @@ class RoleMiddleware implements MiddlewareInterface
             return ApiResponse::error('Authentication required.', 401);
         }
 
-        if (!in_array($role, $this->allowedRole(), true)) {
+        if (!in_array($role, $this->allowedRoles(), true)) {
             return ApiResponse::error(
                 'You do not have permission to perform this action.',
                 403
@@ -32,7 +33,7 @@ class RoleMiddleware implements MiddlewareInterface
         return $next($request);
     }
 
-    protected function allowedRole(): array
+    protected function allowedRoles(): array
     {
         return [];
     }

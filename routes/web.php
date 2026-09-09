@@ -7,6 +7,7 @@ use App\Controllers\HomeController;
 use App\Controllers\OrderController;
 use App\Controllers\ProductController;
 use App\Http\Middleware\AuthMiddleware;
+use App\Http\Middleware\CsrfMiddleware;
 use App\Http\Middleware\ProductDeleteMiddleware;
 use App\Http\Middleware\ProductWriteMiddleware;
 use App\Http\Response;
@@ -30,7 +31,7 @@ return function(Router $router, $container): void
      */
     $router->get('/products', [$productController, 'index']);
     $router->get('/products/{id}', [$productController, 'show']);
-    $router->post('/products', [$productController, 'store'], [AuthMiddleware::class, ProductWriteMiddleware::class]);
+    $router->post('/products', [$productController, 'store'], [AuthMiddleware::class, ProductWriteMiddleware::class, CsrfMiddleware::class]);
     $router->patch('/products/{id}', [$productController, 'update'], [AuthMiddleware::class, ProductWriteMiddleware::class]);
     $router->delete('/products/{id}', [$productController, 'destroy'], [AuthMiddleware::class, ProductDeleteMiddleware::class]);
     $router->get('/products/{productId}/reviews/{reviewId}', [$productController, 'review']);
@@ -47,6 +48,7 @@ return function(Router $router, $container): void
     $router->post('/register', [$authController, 'register']);
     $router->post('/login', [$authController, 'login']);
     $router->post('/logout', [$authController, 'logout'], [AuthMiddleware::class]);
+    $router->get('/csrf-token', [$authController, 'csrf'], [AuthMiddleware::class]);
 
     /**
      * Health Check

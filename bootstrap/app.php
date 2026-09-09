@@ -21,6 +21,7 @@ use App\Repositories\ProductRepositoryInterface;
 use App\Repositories\UserRepository;
 use App\Repositories\UserRepositoryInterface;
 use App\Routing\Router;
+use App\Security\CsrfManager;
 use Dotenv\Dotenv;
 
 require_once __DIR__ . '/../vendor/autoload.php'; // requiring vender autoload for autoloading files
@@ -109,3 +110,5 @@ $container->singleton(
         );
     }
 );
+
+$container->singleton(CsrfManager::class, function() use($container) { return new CsrfManager($container->get(SessionManager::class)); });
