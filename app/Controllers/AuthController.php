@@ -11,6 +11,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Response;
 use App\Security\CsrfManager;
+use App\Services\AuthService;
 use App\Services\UserService;
 
 class AuthController
@@ -18,6 +19,7 @@ class AuthController
     public function __construct(
         private Request $request,
         private UserService $service,
+        private AuthService $authService,
         private SessionManager $sessionManager,
         private CsrfManager $csrf) {}
 
@@ -48,7 +50,7 @@ class AuthController
         $request->validate();
 
         $data = $request->data();
-        $user = $this->service->login($data->email, $data->password);
+        $user = $this->authService->login($data->email, $data->password);
 
         $this->sessionManager->login($user['id']);
 
