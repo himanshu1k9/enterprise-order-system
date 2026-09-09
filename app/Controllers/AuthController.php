@@ -57,4 +57,15 @@ class AuthController
             'role' => $user['role']
         ]);
     }
+
+    /**
+     * Endpoint to logout the user
+     *
+     * @return Response
+     */
+    public function logout(): Response
+    {
+        $this->sessionManager->logout();
+        return ApiResponse::success('Logged out successfully.');
+    }
 }
