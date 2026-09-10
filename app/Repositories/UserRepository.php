@@ -62,4 +62,21 @@ class UserRepository implements UserRepositoryInterface
 
         return (int) $this->pdo->lastInsertId();
     }
+
+    /**
+     * Method to update the password
+     *
+     * @param integer $userId
+     * @param string $passwordHash
+     * @return boolean
+     */
+    #[Override]
+    public function updatePassword(int $userId, string $passwordHash): bool
+    {
+        $sql = "UPDATE users SET password = :password WHERE id = :id";
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindParam(':id', $id, PDO::PARAM_INT);
+        $statement->bindParam(':password', $passwordHash, PDO::PARAM_STR);
+        return  $statement->execute();
+    }
 }

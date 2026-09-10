@@ -24,6 +24,8 @@ use App\Http\Middleware\ProductWriteMiddleware;
 use App\Http\Request;
 use App\Http\RequestId;
 use App\Logging\Logger;
+use App\Repositories\PasswordResetTokenRepository;
+use App\Repositories\PasswordResetTokenRepositoryInterface;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProductRepositoryInterface;
 use App\Repositories\UserRepository;
@@ -249,6 +251,11 @@ $container->bind(
 $container->bind(
     UserRepositoryInterface::class,
     UserRepository::class
+);
+
+$container->bind(
+    PasswordResetTokenRepositoryInterface::class,
+    PasswordResetTokenRepository::class
 );
 
 $container->singleton(PermissionMiddleware::class, function() use($container) {
@@ -539,17 +546,9 @@ $container->singleton(
 |
 */
 
-$router = $container->get(
-    Router::class
-);
-
+$router = $container->get(Router::class);
 $routes = require __DIR__ . '/../routes/web.php';
-
-$routes(
-    $router,
-    $container
-);
-
+$routes($router, $container);
 
 /*
 |--------------------------------------------------------------------------
