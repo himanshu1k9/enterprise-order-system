@@ -14,8 +14,7 @@ class Kernel
         private Container $container,
         private Router $router,
         private ExceptionHandler $exceptionHandler
-        )
-    {}
+        ) {}
 
     // public function handle(Request $request, array $middleware): Response
     // {
@@ -64,10 +63,45 @@ class Kernel
         /*
         * Route-specific middleware
         */
-        foreach (array_reverse($route->middleware) as $middlewareClass) {
-            $pipeline = function(Request $request) use ($middlewareClass, $pipeline): Response {
-                $middleware = $this->container->get($middlewareClass);
-                return $middleware->handle($request, $pipeline);
+        foreach (array_reverse($route->middleware) as $middlewareDefinition) {
+            $previousPipeline = $pipeline;
+            $pipeline = function(Request $request) use ($middlewareDefinition, $previousPipeline): Response {
+                /*
+                |--------------------------------------------------------------------------
+                | Simple Middleware
+                |--------------------------------------------------------------------------
+                |
+                | Example:
+                |
+                | AuthMiddleware::class
+                |
+                */
+                if(is_string($middlewareDefinition)) {
+                    $middleware = $this->container->get($middlewareDefinition);
+                    return $middleware->handle($request, $previousPipeline);
+                }
+                // $middleware = $this->container->get($middlewareClass);
+                // return $middleware->handle($request, $previousPipeline);
+
+                /*
+                |--------------------------------------------------------------------------
+                | Configured Middleware
+                |--------------------------------------------------------------------------
+                |
+                | Example:
+                |
+                | [
+                |     PermissionMiddleware::class,
+                |     Permission::PRODUCT_DELETE
+                | ]
+                |
+                */
+                if(is_array($middlewareDefinition)) {
+                    $middlewareClass = $middlewareDefinition[0];
+                    $arguements = array_slice($middlewareDefinition, 1);
+                    $middleware = $this->container->get($middlewareClass);
+                    return $middleware->handle($request, $previousPipeline, ...$arguements);
+                }
             };
         }
 

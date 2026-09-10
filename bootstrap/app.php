@@ -18,6 +18,7 @@ use App\Container\Container;
 use App\Database\Database;
 use App\Exceptions\ExceptionHandler;
 use App\Http\Kernel;
+use App\Http\Middleware\PermissionMiddleware;
 use App\Http\Middleware\ProductDeleteMiddleware;
 use App\Http\Middleware\ProductWriteMiddleware;
 use App\Http\Request;
@@ -250,6 +251,10 @@ $container->bind(
     UserRepository::class
 );
 
+$container->singleton(PermissionMiddleware::class, function() use($container) {
+    return new PermissionMiddleware($container->get(CurrentUser::class));
+});
+
 
 /*
 |--------------------------------------------------------------------------
@@ -280,7 +285,6 @@ $container->bind(
 $container->singleton(
     SessionManager::class,
     function () {
-
         return new SessionManager();
     }
 );

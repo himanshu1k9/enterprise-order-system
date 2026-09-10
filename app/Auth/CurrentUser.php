@@ -13,6 +13,11 @@ class CurrentUser
         private UserRepositoryInterface $users
     ) {}
 
+    /**
+     * Method to Returning if user exists or not
+     *
+     * @return array|null
+     */
     public function user(): array|null
     {
         $userId = $this->sessionManager->userId();
@@ -23,6 +28,11 @@ class CurrentUser
         return $this->users->findById($userId);
     }
 
+    /**
+     * Method to return role of existing user
+     *
+     * @return string|null
+     */
     public function role(): ?string
     {
         $user = $this->user();
@@ -31,5 +41,21 @@ class CurrentUser
         }
 
         return $user['role'] ?? null;
+    }
+
+    /**
+     * Method to returs if user can the task or not
+     *
+     * @param string $permission
+     * @return boolean
+     */
+    public function can(string $permission): bool
+    {
+        $role = $this->role();
+        if($role === null) {
+            return false;
+        }
+
+        return RolePermissions::has($role, $permission);
     }
 }

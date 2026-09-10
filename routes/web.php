@@ -2,14 +2,16 @@
 
 declare(strict_types = 1);
 
+use App\Auth\Permission;
 use App\Controllers\AuthController;
 use App\Controllers\HomeController;
 use App\Controllers\OrderController;
 use App\Controllers\ProductController;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\CsrfMiddleware;
-use App\Http\Middleware\ProductDeleteMiddleware;
-use App\Http\Middleware\ProductWriteMiddleware;
+use App\Http\Middleware\PermissionMiddleware;
+// use App\Http\Middleware\ProductDeleteMiddleware;
+// use App\Http\Middleware\ProductWriteMiddleware;
 use App\Http\Response;
 use App\Routing\Router;
 
@@ -31,9 +33,21 @@ return function(Router $router, $container): void
      */
     $router->get('/products', [$productController, 'index']);
     $router->get('/products/{id}', [$productController, 'show']);
-    $router->post('/products', [$productController, 'store'], [AuthMiddleware::class, ProductWriteMiddleware::class, CsrfMiddleware::class]);
-    $router->patch('/products/{id}', [$productController, 'update'], [AuthMiddleware::class, ProductWriteMiddleware::class]);
-    $router->delete('/products/{id}', [$productController, 'destroy'], [AuthMiddleware::class, ProductDeleteMiddleware::class]);
+    $router->post('/products', [$productController, 'store'], [AuthMiddleware::class, [
+        PermissionMiddleware::class,
+        Permission::PRODUCT_CREATE
+    ], CsrfMiddleware::class]);
+
+    $router->patch('/products/{id}', [$productController, 'update'], [AuthMiddleware::class, [
+        PermissionMiddleware::class,
+        Permission::PRODUCT_UPDATE
+    ]]);
+
+    $router->delete('/products/{id}', [$productController, 'destroy'], [AuthMiddleware::class, [
+        PermissionMiddleware::class,
+        Permission::PRODUCT_DELETE
+    ]]);
+
     $router->get('/products/{productId}/reviews/{reviewId}', [$productController, 'review']);
 
     /**
