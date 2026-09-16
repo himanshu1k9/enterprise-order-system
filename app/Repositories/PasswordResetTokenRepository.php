@@ -14,7 +14,7 @@ class PasswordResetTokenRepository implements PasswordResetTokenRepositoryInterf
     public function create(int $userId, string $tokenHash, string $expiresAt): int
     {
         $sql = "INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
-                VALUES (:user_id, :token_hash), :expires_at)";
+                VALUES (:user_id, :token_hash, :expires_at)";
 
         $statement = $this->pdo->prepare($sql);
         $statement->bindParam(':user_id', $userId, PDO::PARAM_INT);
@@ -28,11 +28,12 @@ class PasswordResetTokenRepository implements PasswordResetTokenRepositoryInterf
     public function findValidToken(string $tokenHash): array|false
     {
         $sql = "SELECT id, user_id, token_hash, expires_at, used_at, created_at FROM password_reset_tokens
-                WHERE token_hash = :token_hash AND expires_at > NOW() AND used_at IS NULL LIMIT 1";
+                WHERE `token_hash` = :token_hash AND expires_at > NOW() AND used_at IS NULL LIMIT 1";
 
         $statement = $this->pdo->prepare($sql);
         $statement->bindParam(':token_hash', $tokenHash, PDO::PARAM_STR);
         $statement->execute();
+        // var_dump($statement->fetch(PDO::FETCH_ASSOC)); die;
 
         return $statement->fetch(PDO::FETCH_ASSOC) ?: false;
     }

@@ -75,7 +75,7 @@ class UserRepository implements UserRepositoryInterface
     {
         $sql = "UPDATE users SET password = :password WHERE id = :id";
         $statement = $this->pdo->prepare($sql);
-        $statement->bindParam(':id', $id, PDO::PARAM_INT);
+        $statement->bindParam(':id', $userId, PDO::PARAM_INT);
         $statement->bindParam(':password', $passwordHash, PDO::PARAM_STR);
         return  $statement->execute();
     }

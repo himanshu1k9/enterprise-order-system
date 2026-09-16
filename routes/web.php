@@ -63,7 +63,8 @@ return function(Router $router, $container): void
     $router->post('/login', [$authController, 'login']);
     $router->post('/logout', [$authController, 'logout'], [AuthMiddleware::class]);
     $router->get('/csrf-token', [$authController, 'csrf'], [AuthMiddleware::class]);
-
+    $router->post('/forgot-password', [$authController, 'forgotPassword']);
+    $router->post('/reset-password', [$authController, 'resetPassword']);
     /**
      * Health Check
      */

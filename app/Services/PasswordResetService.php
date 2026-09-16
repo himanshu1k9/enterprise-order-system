@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Services;
 
+use App\Database\TransactionManager;
 use App\Repositories\PasswordResetTokenRepositoryInterface;
 use App\Repositories\UserRepositoryInterface;
 use RuntimeException;
@@ -12,7 +13,8 @@ class PasswordResetService
 {
     public function __construct(
         private PasswordResetTokenRepositoryInterface $passwordRepo,
-        private UserRepositoryInterface $userRepo
+        private UserRepositoryInterface $userRepo,
+        private TransactionManager $transaction
     ) {}
 
     /**
@@ -26,6 +28,11 @@ class PasswordResetService
     {
         $user = $this->userRepo->findByEmail($email);
         if(!$user) {
+            // if($_ENV['APP_ENV'] === 'development') {
+            //     throw new RuntimeException("Account not found.");
+            // } else {
+            //     return false;
+            // }
             return false;
         }
 
@@ -42,7 +49,7 @@ class PasswordResetService
         | Generate cryptographically secure random token
         |--------------------------------------------------------------------------
         */
-        $rowToken = hex2bin(random_bytes(32));
+        $rowToken = bin2hex(random_bytes(32));
 
         /*
         |--------------------------------------------------------------------------
@@ -67,8 +74,11 @@ class PasswordResetService
     /**
      * Validate reset token and change password.
     */
-    public function passwordReset(string $rowToken, string $newPassword): bool
+    public function passwordReset(string $rowToken, string $newPassword, string $confirmPassword): bool
     {
+        if($newPassword !== $confirmPassword) {
+            throw new RuntimeException("Confirm password mismatched.");
+        }
         /*
         |--------------------------------------------------------------------------
         | Convert submitted raw token into its database hash
@@ -106,19 +116,31 @@ class PasswordResetService
         | Update user password
         |--------------------------------------------------------------------------
         */
-        $updated = $this->userRepo->updatePassword($userId, $passwordHash);
-        if(!$updated) {
-            return false;
-        }
+        return $this->transaction->run(function() use($userId, $passwordHash, $token): bool {
+            /*
+            |--------------------------------------------------------------------------
+            | Update password
+            |--------------------------------------------------------------------------
+            */
+            $updated = $this->userRepo->updatePassword($userId, $passwordHash);
+            if(!$updated) {
+                return false;
+            }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Consume reset token
-        |--------------------------------------------------------------------------
-        |
-        | Once used, this token can never be reused.
-        |
-        */
-        return $this->passwordRepo->markAsUsed((int) $token['id']);
+            /*
+            |--------------------------------------------------------------------------
+            | Consume reset token
+            |--------------------------------------------------------------------------
+            */
+            $used = $this->passwordRepo->markAsUsed((int) $token['id']);
+
+            if (!$used) {
+                throw new \RuntimeException(
+                    'Unable to consume reset token.'
+                );
+            }
+
+            return true;
+        });
     }
 }
