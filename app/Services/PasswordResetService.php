@@ -127,6 +127,11 @@ class PasswordResetService
                 return false;
             }
 
+            /**
+             * Incrementing session version
+             */
+            $this->userRepo->incrementSessionVersion($userId);
+
             /*
             |--------------------------------------------------------------------------
             | Consume reset token

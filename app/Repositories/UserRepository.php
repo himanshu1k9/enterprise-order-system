@@ -6,6 +6,7 @@ namespace App\Repositories;
 
 use Override;
 use PDO;
+use RuntimeException;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -78,5 +79,42 @@ class UserRepository implements UserRepositoryInterface
         $statement->bindParam(':id', $userId, PDO::PARAM_INT);
         $statement->bindParam(':password', $passwordHash, PDO::PARAM_STR);
         return  $statement->execute();
+    }
+
+    /**
+     * Method to increase session version
+     *
+     * @param integer $userId
+     * @return void
+     */
+    #[Override]
+    public function incrementSessionVersion(int $userId): void
+    {
+        $statement = $this->pdo->prepare("UPDATE users SET session_version = session_version + 1 WHERE id = :id");
+        $statement->execute([
+            'id' => $userId
+        ]);
+    }
+
+    /**
+     * Method to get session version
+     *
+     * @param integer $userId
+     * @return integer
+     */
+    #[Override]
+    public function getSessionVersion(int $userId): int
+    {
+        $statement = $this->pdo->prepare("SELECT session_version FROM users WHERE id = :id");
+        $statement->execute([
+            ':id' => $userId
+        ]);
+
+        $version = $statement->fetchColumn();
+        if($version === false) {
+            throw new RuntimeException("User Not found");
+        }
+
+        return (int) $version;
     }
 }

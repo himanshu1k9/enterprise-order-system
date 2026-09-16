@@ -34,11 +34,12 @@ class SessionManager
      * @param integer $user_id
      * @return void
      */
-    public function login(int $user_id): void
+    public function login(int $user_id, int $sessionVersion): void
     {
         $this->start();
         session_regenerate_id(true);
         $_SESSION['user_id'] = $user_id;
+        $_SESSION['session_version'] = $sessionVersion;
     }
 
     /**
@@ -84,5 +85,19 @@ class SessionManager
         }
 
         session_destroy();
+    }
+
+    /**
+     * Method to get session version
+     *
+     * @return integer|null
+     */
+    public function sessionversion(): ?int
+    {
+        $this->start();
+        if(!isset($_SESSION['session_version'])) {
+            return null;
+        }
+        return (int) $_SESSION['session_version'];
     }
 }

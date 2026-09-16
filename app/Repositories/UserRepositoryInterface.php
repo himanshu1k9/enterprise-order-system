@@ -10,4 +10,6 @@ interface UserRepositoryInterface
     public function findById(int $id): array|false;
     public function create(string $name, string $email, string $passwordHash, string $role = 'customer'): int;
     public function updatePassword(int $userId, string $passwordHash): bool;
+    public function incrementSessionVersion(int $userId): void;
+    public function getSessionVersion(int $userId): int;
 }

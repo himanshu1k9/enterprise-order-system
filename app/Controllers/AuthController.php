@@ -56,8 +56,8 @@ class AuthController
 
         $data = $request->data();
         $user = $this->authService->login($data->email, $data->password);
-
-        $this->sessionManager->login($user['id']);
+        $sessionVersion = $this->authService->getSessionVersion($user['id']);
+        $this->sessionManager->login($user['id'], $sessionVersion);
 
         return ApiResponse::success('Login Successful', [
             'id' => (int) $user['id'],

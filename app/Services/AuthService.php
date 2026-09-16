@@ -55,4 +55,9 @@ class AuthService
 
         return $user;
     }
+
+    public function getSessionVersion(int $userId): int
+    {
+        return (int) $this->repo->getSessionVersion($userId);
+    }
 }
