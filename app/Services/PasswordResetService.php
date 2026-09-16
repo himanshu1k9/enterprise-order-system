@@ -163,7 +163,6 @@ class PasswordResetService
         | Count this request
         |--------------------------------------------------------------------------
         */
-
         $this->limitter->hit($ipKey);
         if($newPassword !== $confirmPassword) {
             throw new RuntimeException("Confirm password mismatched.");
@@ -197,21 +196,6 @@ class PasswordResetService
 
         /*
         |--------------------------------------------------------------------------
-        | Find token that is:
-        |
-        | 1. Correct
-        | 2. Not used
-        | 3. Not expired
-        |--------------------------------------------------------------------------
-        */
-        $token = $this->passwordRepo->findValidToken($tokenHash);
-        if($token === false) {
-            return false;
-        }
-
-        $userId = (int) $token['user_id'];
-        /*
-        |--------------------------------------------------------------------------
         | Hash the NEW PASSWORD
         |--------------------------------------------------------------------------
         */
@@ -225,7 +209,24 @@ class PasswordResetService
         | Update user password
         |--------------------------------------------------------------------------
         */
-        return $this->transaction->run(function() use($userId, $passwordHash, $token): bool {
+        return $this->transaction->run(function() use($passwordHash, $tokenHash): bool {
+            /*
+            |--------------------------------------------------------------------------
+            | Find token that is:
+            |
+            | 1. Correct
+            | 2. Not used
+            | 3. Not expired
+            |--------------------------------------------------------------------------
+            */
+            // $token = $this->passwordRepo->findValidToken($tokenHash);
+            $token = $this->passwordRepo->findValidTokenForUpdate($tokenHash);
+            if($token === false) {
+                return false;
+            }
+
+            $userId = (int) $token['user_id'];
+
             /*
             |--------------------------------------------------------------------------
             | Update password

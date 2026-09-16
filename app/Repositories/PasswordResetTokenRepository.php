@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use Override;
 use PDO;
 
 class PasswordResetTokenRepository implements PasswordResetTokenRepositoryInterface
@@ -58,5 +59,21 @@ class PasswordResetTokenRepository implements PasswordResetTokenRepositoryInterf
         $statement->execute();
 
         return $statement->rowCount() > 0;
+    }
+
+    #[Override]
+    public function findValidTokenForUpdate(string $tokenHash): array|false
+    {
+        $sql = "SELECT id, user_id, token_hash, expires_at, used_at, created_at
+                FROM password_reset_tokens  WHERE token_hash = :token_hash
+                AND used_at IS NULL AND expires_at > NOW() LIMIT 1 FOR UPDATE";
+
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute([
+            ':token_hash' => $tokenHash
+        ]);
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result ?: false;
     }
 }

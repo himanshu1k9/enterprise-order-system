@@ -7,10 +7,8 @@ namespace App\Repositories;
 interface PasswordResetTokenRepositoryInterface
 {
     public function create(int $userId, string $tokenHash, string $expiresAt): int;
-
     public function findValidToken(string $tokenHash): array|false;
-
     public function markAsUsed(int $id): bool;
-
     public function deleteUserTokens(int $userId): bool;
+    public function findValidTokenForUpdate(string $tokenHash): array|false;
 }
