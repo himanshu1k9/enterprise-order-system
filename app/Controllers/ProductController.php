@@ -59,7 +59,7 @@ class ProductController
         $jwt = new JwtManager($_ENV['JWT_SECRET']);
         $token = $jwt->createToken(25);
 
-        // $payload = $jwt->verifyToken($token);
+        $payload = $jwt->verifyToken($token);
 
         // var_dump($response); die;
         return Response::json([
@@ -67,7 +67,7 @@ class ProductController
             // 'data' => $products,
             // 'meta' => $metaData,
             'token' => $token,
-            // 'payload' => $payload
+            'payload' => $payload
         ], 200);
         // throw new Exception("Something went wrong");
         // throw new NotFoundException("Product not found.");
