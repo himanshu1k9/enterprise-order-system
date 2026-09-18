@@ -7,10 +7,10 @@ namespace App\Controllers;
 // use App\DTO\CreateProductData;
 // use App\Exceptions\NotFoundException;
 
+use App\Auth\JwtManager;
 use App\DTO\PaginationData;
 use App\DTO\ProductFilterData;
 use App\DTO\ProductSortData;
-use App\DTO\UpdateProductData;
 use App\Http\ApiResponse;
 use App\Http\Request;
 use App\Http\Requests\CreateProductRequest;
@@ -56,11 +56,18 @@ class ProductController
             'last_page' => $response['total_pages']
         ];
 
+        $jwt = new JwtManager($_ENV['JWT_SECRET']);
+        $token = $jwt->createToken(25);
+
+        // $payload = $jwt->verifyToken($token);
+
         // var_dump($response); die;
         return Response::json([
             "success" => true,
-            'data' => $products,
-            'meta' => $metaData
+            // 'data' => $products,
+            // 'meta' => $metaData,
+            'token' => $token,
+            // 'payload' => $payload
         ], 200);
         // throw new Exception("Something went wrong");
         // throw new NotFoundException("Product not found.");
@@ -157,6 +164,7 @@ class ProductController
 
     public function destroy(int $id): Response
     {
+        // $userId = $this->request->getAttribute('auth_user_id');
         // echo 'Deleting product: ' . $id;
         $this->productService->delete($id);
         // return Response::json(
@@ -167,7 +175,7 @@ class ProductController
         //     ]
         // );
 
-        return ApiResponse::success(message: "Product deleted", data: ['id' => $id]);
+        return ApiResponse::success(message: "Product deleted",  data: ['id' => $id]);
     }
 
     public function review(

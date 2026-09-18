@@ -6,6 +6,7 @@ namespace App\Http;
 
 class Request
 {
+    private array $attributes = [];
     /**
      * Method to return method name
      *
@@ -130,5 +131,29 @@ class Request
     public function file(string $key): mixed
     {
         return $_FILES[$key] ?? null;
+    }
+
+    /**
+     * Method to set attribute
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function setAttribute(string $key, mixed $value): void
+    {
+        $this->attributes[$key] = $value;
+    }
+
+    /**
+     * Method to get attribute
+     *
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function getAttribute(string $key, mixed $default = null): mixed
+    {
+        return $this->attributes[$key] ?? $default;
     }
 }
