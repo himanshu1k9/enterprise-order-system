@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 use App\Application;
 use App\Auth\CurrentUser;
+use App\Auth\JwtManager;
 use App\Auth\SessionManager;
 use App\Container\Container;
 use App\Database\Database;
@@ -34,7 +35,7 @@ use App\Routing\Router;
 use App\Security\CsrfManager;
 use App\Security\RateLimiter;
 use Dotenv\Dotenv;
-
+use App\Config\Config;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,7 +53,6 @@ use Dotenv\Dotenv;
 */
 
 require_once __DIR__ . '/../vendor/autoload.php';
-
 
 /*
 |--------------------------------------------------------------------------
@@ -75,7 +75,7 @@ $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 
 $dotenv->safeLoad();
 
-
+$configData = require __DIR__ . '/../app/Config/configs.php';
 /*
 |--------------------------------------------------------------------------
 | Error Reporting
@@ -148,6 +148,16 @@ $container->singleton(
         return $database->connection();
     }
 );
+
+
+$container->singleton(Config::class, function() use($configData) {
+    return new Config($configData);
+});
+
+$container->singleton(JwtManager::class, function() use($container) {
+    $config = $container->get(Config::class);
+    return new JwtManager($config->get('jwt.secret'));
+});
 
 
 /*

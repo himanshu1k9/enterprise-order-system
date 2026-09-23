@@ -7,6 +7,7 @@ namespace App\Controllers;
 // use App\DTO\CreateProductData;
 // use App\Exceptions\NotFoundException;
 
+use App\Auth\JwtCurrentUser;
 use App\Auth\JwtManager;
 use App\DTO\PaginationData;
 use App\DTO\ProductFilterData;
@@ -27,7 +28,9 @@ class ProductController
     public function __construct(
         // private ProductRepositoryInterface $product,
         private Request $request,
-        private ProductService $productService
+        private ProductService $productService,
+        private JwtManager $jwt,
+        private JwtCurrentUser $jwtuser
         ) {}
 
     public function index(): Response
@@ -56,18 +59,21 @@ class ProductController
             'last_page' => $response['total_pages']
         ];
 
-        $jwt = new JwtManager($_ENV['JWT_SECRET']);
-        $token = $jwt->createToken(25);
+        // $jwt = new JwtManager($_ENV['JWT_SECRET']);
+        $token = $this->jwt->createToken(25);
 
-        $payload = $jwt->verifyToken($token);
+        $payload = $this->jwt->verifyToken($token);
+        // $secret = bin2hex(random_bytes(32));
 
         // var_dump($response); die;
         return Response::json([
             "success" => true,
             // 'data' => $products,
             // 'meta' => $metaData,
-            'token' => $token,
-            'payload' => $payload
+            // 'token' => $token,
+            'payload' => $payload,
+            // 'secret' => $secret,
+            // 'user_id' => $this->jwtuser->get()
         ], 200);
         // throw new Exception("Something went wrong");
         // throw new NotFoundException("Product not found.");

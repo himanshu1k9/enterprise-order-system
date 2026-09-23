@@ -13,12 +13,12 @@ use RuntimeException;
 
 class JwtAuthMiddleware
 {
-    private JwtManager $jwt;
-    private JwtCurrentUser $user;
-    public function __construct()
+    // private JwtManager $jwt;
+    // private JwtCurrentUser $user;
+    public function __construct(private JwtManager $jwt, private JwtCurrentUser $user)
     {
-        $this->jwt = new JwtManager($_ENV['JWT_SECRET']);
-        $this->user = new JwtCurrentUser();
+        // $this->jwt = new JwtManager($_ENV['JWT_SECRET']);
+        // $this->user = new JwtCurrentUser();
     }
 
     /**
