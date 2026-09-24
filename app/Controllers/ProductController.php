@@ -60,7 +60,7 @@ class ProductController
         ];
 
         // $jwt = new JwtManager($_ENV['JWT_SECRET']);
-        $token = $this->jwt->createToken(25);
+        $token = $this->jwt->createToken(1);
 
         $payload = $this->jwt->verifyToken($token);
         // $secret = bin2hex(random_bytes(32));
@@ -70,7 +70,7 @@ class ProductController
             "success" => true,
             // 'data' => $products,
             // 'meta' => $metaData,
-            // 'token' => $token,
+            'token' => $token,
             'payload' => $payload,
             // 'secret' => $secret,
             // 'user_id' => $this->jwtuser->get()

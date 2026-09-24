@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 use App\Application;
 use App\Auth\CurrentUser;
+use App\Auth\JwtCurrentUser;
 use App\Auth\JwtManager;
 use App\Auth\SessionManager;
 use App\Container\Container;
@@ -481,6 +482,9 @@ $container->singleton(
     }
 );
 
+// Binding important to get current user
+$container->singleton(JwtCurrentUser::class, function() {return new JwtCurrentUser();});
+
 
 /*
 |--------------------------------------------------------------------------
@@ -558,8 +562,24 @@ $container->singleton(
 */
 
 $router = $container->get(Router::class);
-$routes = require __DIR__ . '/../routes/web.php';
-$routes($router, $container);
+// $routes = require __DIR__ . '/../routes/web.php';
+// $routes($router, $container);
+
+/*
+|--------------------------------------------------------------------------
+| Load Web Routes
+|--------------------------------------------------------------------------
+*/
+$webRoutes = require __DIR__ . '/../routes/web.php';
+$webRoutes($router, $container);
+
+/*
+|--------------------------------------------------------------------------
+| Load API Routes
+|--------------------------------------------------------------------------
+*/
+$apiRoutes = require __DIR__ . '/../routes/api.php';
+$apiRoutes($router, $container);
 
 /*
 |--------------------------------------------------------------------------
