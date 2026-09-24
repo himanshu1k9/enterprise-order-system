@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Api\Controllers;
 
+use App\Api\Resources\ProductResource;
 use App\DTO\PaginationData;
 use App\DTO\ProductFilterData;
 use App\DTO\ProductSortData;
@@ -38,7 +39,8 @@ class ProductsController
 
         $response = $this->productServive->paginate($pagination, $filters, $sort);
 
-        $products = $response['data'];
+        // $products = array_map([ProductResource::class, 'make'], $response['data']);
+        $products = ProductResource::collection($response['data']);
         $metaData = [
             'current_page' => $response['page'],
             'per_page' => $response['limit'],
@@ -47,7 +49,6 @@ class ProductsController
         ];
 
         return ApiResponse::success('List of all products', [
-            'success' => true,
             'data' => $products,
             'meta' => $metaData
         ], 200);
@@ -61,7 +62,8 @@ class ProductsController
      */
     public function productById(int $productId): Response
     {
-        $product = $this->productServive->show($productId);
+        $response = $this->productServive->show($productId);
+        $product = ProductResource::make($response);
         return ApiResponse::success('Product found:',$product);
     }
 
