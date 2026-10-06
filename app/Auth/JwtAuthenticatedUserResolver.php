@@ -21,11 +21,11 @@ class JwtAuthenticatedUserResolver
     public function resolve(int $userId): array
     {
         $user = $this->user->findById($userId);
-        if($user === false) {
+        if($user === false || $user === null) {
             throw new RuntimeException('Authenticated user not found');
         }
 
-        if($user['status'] !== 'active') {
+        if(($user['status'] ?? null) !== 'active') {
             throw new RuntimeException('User account is not active');
         }
 

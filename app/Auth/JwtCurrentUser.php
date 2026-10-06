@@ -8,29 +8,40 @@ use RuntimeException;
 
 class JwtCurrentUser
 {
-    private ?int $userId = null;
-
-    public function set(int $userId): void
+    private ?array $user = null;
+    public function set(array $user): void
     {
-        $this->userId = $userId;
+        $this->user = $user;
     }
 
     public function id(): int
     {
-        if($this->userId === null) {
+        if($this->user === null) {
             throw new RuntimeException('No Authenticated user.');
         }
+        return (int) $this->user['id'];
+    }
 
-        return $this->userId;
+    public function user(): array
+    {
+        if($this->user === null) {
+            throw new RuntimeException('No authenticated user.');
+        }
+        return $this->user;
+    }
+
+    public function role(): ?string
+    {
+        return $this->user['role'] ?? null;
     }
 
     public function check(): bool
     {
-        return $this->userId !== null;
+        return $this->user !== null;
     }
 
     public function clear(): void
     {
-        $this->userId = null;
+        $this->user = null;
     }
 }

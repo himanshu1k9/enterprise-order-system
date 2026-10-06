@@ -66,7 +66,7 @@ final class RolePermissions
      */
     public static function permissionFor(string $role): array
     {
-        return self::MAP[$role];
+        return self::MAP[$role] ?? [];
     }
 
     /**

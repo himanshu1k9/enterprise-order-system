@@ -15,7 +15,7 @@ final class OrderResource
         ];
 
         if(isset($order['user']) && is_array($order['user'])) {
-            $data['customer'] = UserResource::make($order['data']);
+            $data['customer'] = UserResource::make($order['user']);
         }
 
         if(isset($order['items']) && is_array($order['items'])) {

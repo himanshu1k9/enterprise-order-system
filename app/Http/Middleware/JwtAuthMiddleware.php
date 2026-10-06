@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Http\Middleware;
 
+use App\Auth\JwtAuthenticatedUserResolver;
 use App\Auth\JwtCurrentUser;
 use App\Auth\JwtManager;
 use App\Http\Request;
@@ -15,7 +16,7 @@ class JwtAuthMiddleware
 {
     // private JwtManager $jwt;
     // private JwtCurrentUser $user;
-    public function __construct(private JwtManager $jwt, private JwtCurrentUser $user)
+    public function __construct(private JwtManager $jwt, private JwtCurrentUser $user, private JwtAuthenticatedUserResolver $resolver)
     {
         // $this->jwt = new JwtManager($_ENV['JWT_SECRET']);
         // $this->user = new JwtCurrentUser();
@@ -33,6 +34,8 @@ class JwtAuthMiddleware
         try {
             $token = $this->extractToken();
             $payload = $this->jwt->verifyToken($token);
+            $userId = $payload['sub'];
+            $authenticateUser = $this->resolver->resolve($userId);
         } catch(RuntimeException $e) {
             return Response::json([
                 'success' => false,
@@ -40,8 +43,9 @@ class JwtAuthMiddleware
             ], 401);
         }
 
-        $request->setAttribute('auth_user_id', $payload['sub']);
-        $this->user->set($payload['sub']);
+        $request->setAttribute('auth_user_id', $authenticateUser['id']);
+        $request->setAttribute('auth_user', $authenticateUser);
+        $this->user->set($authenticateUser);
         return $next($request);
     }
 
@@ -55,34 +59,23 @@ class JwtAuthMiddleware
         $authorization = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
 
         if ($authorization === '') {
-            throw new RuntimeException(
-                'Authorization header is required.'
-            );
+            throw new RuntimeException('Authorization header is required.');
         }
 
-        $parts = preg_split(
-            '/\s+/',
-            trim($authorization)
-        );
+        $parts = preg_split('/\s+/', trim($authorization));
 
         if ($parts === false || count($parts) !== 2) {
-            throw new RuntimeException(
-                'Invalid authorization format.'
-            );
+            throw new RuntimeException('Invalid authorization format.');
         }
 
         [$scheme, $token] = $parts;
 
-        if ($scheme !== 'Bearer') {
-            throw new RuntimeException(
-                'Invalid authorization scheme.'
-            );
+        if (strcasecmp($scheme, 'Bearer') !== 0) {
+            throw new RuntimeException('Invalid authorization scheme.');
         }
 
         if ($token === '') {
-            throw new RuntimeException(
-                'Bearer token is required.'
-            );
+            throw new RuntimeException('Bearer token is required.');
         }
 
         return $token;

@@ -4,11 +4,12 @@ declare(strict_types = 1);
 
 namespace App\Auth;
 
+use App\Repositories\UserRepositoryInterface;
 use RuntimeException;
 
 class JwtManager
 {
-    public function __construct(private string $secret)
+    public function __construct(private string $secret, private UserRepositoryInterface $user)
     {}
 
     /**
@@ -69,13 +70,15 @@ class JwtManager
     private function createPayload(int $userId): string
     {
         $now = time();
+        $session_version = $this->user->getSessionVersion($userId);
         $payload = [
             'sub' => $userId,
             'iat' => $now,
             'exp' => $now + 3600,
             'iss' => 'enterprise-order-system', // issuer
             'aud' => 'enterprise-order-api', // consumer
-            'jti' => bin2hex(random_bytes(16)) // unique jwt id
+            'jti' => bin2hex(random_bytes(16)), // unique jwt id
+            'session_version' => $session_version
         ];
 
         $json = json_encode($payload, JSON_UNESCAPED_SLASHES);
@@ -185,6 +188,15 @@ class JwtManager
 
         if (!isset($payload['iat']) || !is_int($payload['iat'])) {
             throw new RuntimeException('Invalid JWT issued-at time.');
+        }
+
+        if(!isset($payload['session_version']) || !is_infinite($payload['session_version'])) {
+            throw new RuntimeException('Invalid JWT session version.');
+        }
+
+        $currentSessionVerssion = $this->user->getSessionVersion($payload['sub']);
+        if($payload['session_version'] !== $currentSessionVerssion) {
+            throw new RuntimeException('JWT session has been invalidated.');
         }
 
         return $payload;

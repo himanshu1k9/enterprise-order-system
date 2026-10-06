@@ -73,11 +73,11 @@ class Container
             throw new RuntimeException("Class {$concrete} does not exist.");
         }
 
-         /**
+        /**
          * Implementing Circular dependencies
          * ------------------------------------
          */
-         if(isset($this->resolving[$concrete])) {
+        if(isset($this->resolving[$concrete])) {
             throw new RuntimeException("Circular dependency detected: {$concrete}");
         }
         $this->resolving[$concrete] = true;

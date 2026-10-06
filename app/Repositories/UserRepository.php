@@ -107,7 +107,7 @@ class UserRepository implements UserRepositoryInterface
     {
         $statement = $this->pdo->prepare("SELECT session_version FROM users WHERE id = :id");
         $statement->execute([
-            ':id' => $userId
+            'id' => $userId
         ]);
 
         $version = $statement->fetchColumn();
