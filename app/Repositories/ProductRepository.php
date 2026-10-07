@@ -201,4 +201,39 @@ class ProductRepository implements ProductRepositoryInterface {
 
         return $statement->rowCount() > 0;
     }
+
+    #[Override]
+    public function findForOrder(int $productId): ?array
+    {
+        $sql = "SELECT id, name, price, stock, status FROM products WHERE id = :id LIMIT 1";
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindParam(':id', $productId, PDO::PARAM_INT);
+        $statement->execute();
+        $product = $statement->fetch(PDO::FETCH_ASSOC);
+        return $product !== false ? $product : NULL;
+    }
+
+    #[Override]
+    public function findForUpdate(int $productId): ?array
+    {
+        $sql = "SELECT id, name, price, stock, status FROM products WHERE id = :id LIMIT 1 FOR UPDATE";
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindValue(':id', $productId, PDO::PARAM_INT);
+        $statement->execute();
+
+        $product = $statement->fetch(PDO::FETCH_ASSOC);
+        return $product !== false ? $product : NULL;
+    }
+
+    #[Override]
+    public function decreaseStock(int $productId, int $quantity): bool
+    {
+        $sql = "UPDATE products SET stock = stock - :quantity WHERE id = :id AND stock >= :quantity";
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindValue(':quantity', $quantity, PDO::PARAM_INT);
+        $statement->bindValue(':id', $productId, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->rowCount() === 1;
+    }
 }

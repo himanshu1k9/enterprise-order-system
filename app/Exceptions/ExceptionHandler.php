@@ -23,6 +23,10 @@ class ExceptionHandler
      */
     public function handle(Throwable $exception): Response
     {
+        if($exception instanceof DomainException) {
+            return ApiResponse::error($exception->getMessage(), 400);
+        }
+
         /**
          * 429 Too many requests
          */

@@ -18,4 +18,7 @@ interface ProductRepositoryInterface
     public function paginate(PaginationData $pagination, ProductFilterData $productFilters, ProductSortData $sort): array;
     public function update(int $id, UpdateProductData $data): bool;
     public function delete(int $id): bool;
+    public function findForOrder(int $productId): ?array;
+    public function findForUpdate(int $productId): ?array;
+    public function decreaseStock(int $productId, int $quantity): bool;
 }
